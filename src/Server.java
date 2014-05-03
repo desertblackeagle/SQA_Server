@@ -52,12 +52,10 @@ public class Server {
 	private void match() {
 		new Thread(new Runnable() {
 			public void run() {
-				int a = 0;
-				while (a != 1) {
+				while (true) {
 					Thread.interrupted();
 //					System.out.println("al is less 2 " + a);
 					if (al.size() >= 2) {
-						a = 5;
 						SocketPack s1, s2;
 						s1 = al.get(0);
 						s2 = al.get(1);
@@ -66,11 +64,6 @@ public class Server {
 						System.out.println("bridge");
 						bridge = new ClientBridge(s1, s2);
 					} else {
-//						if (a == 5) {
-//							System.out.println(al.size());
-//						} else {
-//							System.out.println(al.size());
-//						}
 					}
 				}
 			}
