@@ -1,5 +1,5 @@
 package net;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 
 public class MessagePack implements java.io.Serializable {
@@ -14,6 +14,10 @@ public class MessagePack implements java.io.Serializable {
 
 	public String getAction() {
 		return action;
+	}
+
+	public void setAction(String act) {
+		action = act;
 	}
 
 	public void addData(String key, Object o) {
