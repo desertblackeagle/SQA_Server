@@ -17,8 +17,16 @@ public class Rule {
 		}
 		if (color == 0)// string start with red
 		{// get chess name without red or black in beginning and end with number for chess
+			if(name.substring(3,4).equals("K"))
+			{
+				subName = name.substring(3, name.length()); 
+			}
 			subName = name.substring(3, name.length() - 1); 
 		} else { // string start with black
+			if(name.substring(5,6).equals("K"))
+			{
+				subName = name.substring(5, name.length()); 
+			}
 			subName = name.substring(5, name.length() - 1);
 		}
 		if (subName.equals("Rook")) {
