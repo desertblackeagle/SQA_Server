@@ -99,9 +99,7 @@ public class Rule {
 					if ((x + 2) == toX && y + 2 == toY) { // 只能斜向移動 往右邊移動
 						if (c.getChessboard()[x + 1][y + 1] == null) { // 如果沒有塞象眼
 							{
-								if (c.getChessboard()[toX][toY] != null) {
-									isKingOrNot(c, toX, toY);
-								}
+								
 								return true;
 							}
 
@@ -112,9 +110,7 @@ public class Rule {
 					{
 						if (c.getChessboard()[x - 1][y + 1] == null) { // 如果沒有塞象眼
 							{
-								if (c.getChessboard()[toX][toY] != null) {
-									isKingOrNot(c, toX, toY);
-								}
+								
 								return true;
 							}
 
@@ -124,9 +120,7 @@ public class Rule {
 					} else if ((x - 2) == toX && y - 2 == toY) { // 只能斜向移動
 						if (c.getChessboard()[x - 1][y - 1] == null) { // 如果沒有塞象眼
 							{
-								if (c.getChessboard()[toX][toY] != null) {
-									isKingOrNot(c, toX, toY);
-								}
+								
 								return true;
 							}
 
@@ -136,9 +130,7 @@ public class Rule {
 					} else if ((x + 2) == toX && y - 2 == toY) { // 只能斜向移動
 						if (c.getChessboard()[x + 1][y - 1] == null) { // 如果沒有塞象眼
 							{
-								if (c.getChessboard()[toX][toY] != null) {
-									isKingOrNot(c, toX, toY);
-								}
+								
 								return true;
 							}
 
@@ -156,9 +148,7 @@ public class Rule {
 					if ((x + 2) == toX && y + 2 == toY) { // 只能斜向移動
 						if (c.getChessboard()[x + 1][y + 1] == null) { // 如果沒有塞象眼
 							{
-								if (c.getChessboard()[toX][toY] != null) {
-									isKingOrNot(c, toX, toY);
-								}
+								
 								return true;
 							}
 
@@ -169,9 +159,7 @@ public class Rule {
 					{
 						if (c.getChessboard()[x - 1][y + 1] == null) { // 如果沒有塞象眼
 							{
-								if (c.getChessboard()[toX][toY] != null) {
-									isKingOrNot(c, toX, toY);
-								}
+								
 								return true;
 							}
 
@@ -181,9 +169,7 @@ public class Rule {
 					} else if ((x - 2) == toX && y - 2 == toY) { // 只能斜向移動
 						if (c.getChessboard()[x - 1][y - 1] == null) { // 如果沒有塞象眼
 							{
-								if (c.getChessboard()[toX][toY] != null) {
-									isKingOrNot(c, toX, toY);
-								}
+								
 								return true;
 							}
 
@@ -193,9 +179,7 @@ public class Rule {
 					} else if ((x + 2) == toX && y - 2 == toY) { // 只能斜向移動
 						if (c.getChessboard()[x + 1][y - 1] == null) { // 如果沒有塞象眼
 							{
-								if (c.getChessboard()[toX][toY] != null) {
-									isKingOrNot(c, toX, toY);
-								}
+								
 								return true;
 							}
 
@@ -214,9 +198,7 @@ public class Rule {
 				if (toX >= 7 && toX <= 9 && toY <= 5 && toY >= 3) { // 判斷是否在九宮格內
 					if (Math.abs(toX - x) == 1 && Math.abs(toY - y) == 1) { // 只能斜向移動
 						{
-							if (c.getChessboard()[toX][toY] != null) {
-								isKingOrNot(c, toX, toY);
-							}
+							
 							return true;
 						}
 
@@ -228,9 +210,7 @@ public class Rule {
 				if (toX >= 0 && toX <= 2 && toY <= 5 && toY >= 3) {// 判斷是否在九宮格內
 					if (Math.abs(toX - x) == 1 && Math.abs(toY - y) == 1) { // 只能斜向移動
 						{
-							if (c.getChessboard()[toX][toY] != null) {
-								isKingOrNot(c, toX, toY);
-							}
+							
 							return true;
 						}
 
