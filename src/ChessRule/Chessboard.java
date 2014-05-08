@@ -1,4 +1,6 @@
 package ChessRule;
+
+
 public class Chessboard {
 	Chess[][] p= new Chess[10][9];
 	
@@ -124,5 +126,16 @@ public class Chessboard {
 			return true;
 		}
 		return false;
+	}
+
+	public boolean isKingOrNot(Chessboard c, int toX, int toY) {
+		if (c.getChessboard()[toX][toY].getName().equals("redKing")
+				|| c.getChessboard()[toX][toY].getName().equals("blackKing")) {
+			c.getChessboard()[toX][toY].setDead();
+			return true;
+
+		}
+		return false;
+
 	}
 }

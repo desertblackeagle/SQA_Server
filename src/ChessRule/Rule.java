@@ -49,7 +49,7 @@ public class Rule {
 					}
 				}
 				if (c.getChessboard()[toX][toY] != null) {
-					isKingOrNot(c, toX, toY);
+					c.isKingOrNot(c, toX, toY);
 				}
 				return true;
 			} else if (toY == y)// 只移動x軸座標
@@ -69,7 +69,7 @@ public class Rule {
 					}
 				}
 				if (c.getChessboard()[toX][toY] != null) {
-					isKingOrNot(c, toX, toY);
+					c.isKingOrNot(c, toX, toY);
 				}
 				return true;
 			}
@@ -79,7 +79,7 @@ public class Rule {
 					return false;
 				}
 				if (c.getChessboard()[toX][toY] != null) {
-					isKingOrNot(c, toX, toY);
+					c.isKingOrNot(c, toX, toY);
 				}
 				return true;
 			} else if (Math.abs(toY - y) == 2 && Math.abs(toX - x) == 1) {
@@ -87,7 +87,7 @@ public class Rule {
 					return false;
 				}
 				if (c.getChessboard()[toX][toY] != null) {
-					isKingOrNot(c, toX, toY);
+					c.isKingOrNot(c, toX, toY);
 				}
 				return true;
 			}
@@ -280,7 +280,7 @@ public class Rule {
 
 				if (count == 1 && (toX == x || toY == y)) {
 					if (c.getChessboard()[toX][toY] != null) {
-						isKingOrNot(c, toX, toY);
+						c.isKingOrNot(c, toX, toY);
 					}
 					return true;
 				} else {
@@ -336,7 +336,7 @@ public class Rule {
 					if ((Math.abs(x - toX) + Math.abs(y - toY)) == 1) {
 						if ((x - toX) != -1) {
 							if (c.getChessboard()[toX][toY] != null) {
-								isKingOrNot(c, toX, toY);
+								c.isKingOrNot(c, toX, toY);
 							}
 							return true;
 						}
@@ -353,7 +353,7 @@ public class Rule {
 					if ((Math.abs(x - toX) + Math.abs(y - toY)) == 1) {
 						if ((x - toX) != 1) {
 							if (c.getChessboard()[toX][toY] != null) {
-								isKingOrNot(c, toX, toY);
+								c.isKingOrNot(c, toX, toY);
 							}
 							return true;
 						}
@@ -364,11 +364,5 @@ public class Rule {
 		return false;
 	}
 
-	public static void isKingOrNot(Chessboard c, int toX, int toY) {
-		if (c.getChessboard()[toX][toY].getName().equals("redKing")
-				|| c.getChessboard()[toX][toY].getName().equals("blackKing")) {
-			c.getChessboard()[toX][toY].setDead();
-		}
-
-	}
+	
 }
