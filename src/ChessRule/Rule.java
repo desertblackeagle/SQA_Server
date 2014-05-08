@@ -1,5 +1,4 @@
 package ChessRule;
-
 public class Rule {
 
 	public boolean move(String name, int x, int y, int toX, int toY, int color,
@@ -13,8 +12,8 @@ public class Rule {
 		{
 			return false;
 		}
-		if (c.getChessboard()[toX][toY] != null
-				&& c.getChessboard()[toX][toY].getColor() == color) {
+		if (c.getChessboard()[toY][toX] != null
+				&& c.getChessboard()[toY][toX].getColor() == color) {
 			return false;
 		}
 		if (color == 0)// string start with red
@@ -37,13 +36,13 @@ public class Rule {
 				grid = Math.abs(toY - y);
 				if (toY - y < 0) {
 					for (int i = 0; i < grid - 1; i++) {
-						if (c.getChessboard()[toX][y - 1 - i] != null) {
+						if (c.getChessboard()[y - 1 - i][toX] != null) {
 							return false;
 						}
 					}
 				} else {
 					for (int i = 0; i < grid - 1; i++) {
-						if (c.getChessboard()[toX][y + 1 + i] != null) {
+						if (c.getChessboard()[y + 1 + i][toX] != null) {
 							return false;
 						}
 					}
@@ -55,13 +54,13 @@ public class Rule {
 				grid = Math.abs(toX - x);
 				if (toX - x < 0) {
 					for (int i = 0; i < grid - 1; i++) {
-						if (c.getChessboard()[x - i - 1][toY] != null) {
+						if (c.getChessboard()[toY][x - i - 1] != null) {
 							return false;
 						}
 					}
 				} else {
 					for (int i = 0; i < grid - 1; i++) {
-						if (c.getChessboard()[x + i + 1][toY] != null) {
+						if (c.getChessboard()[toY][x + i + 1] != null) {
 							return false;
 						}
 					}
@@ -71,13 +70,13 @@ public class Rule {
 			}
 		} else if (subName.equals("Horse")) {
 			if (Math.abs(toX - x) == 2 && Math.abs(toY - y) == 1) {
-				if (c.getChessboard()[x + ((toX - x) / 2)][y] != null) {
+				if (c.getChessboard()[y][x + ((toX - x) / 2)] != null) {
 					return false;
 				}
 				c.isKingOrNot(c, toX, toY);
 				return true;
 			} else if (Math.abs(toY - y) == 2 && Math.abs(toX - x) == 1) {
-				if (c.getChessboard()[x][y + ((toY - y) / 2)] != null) {
+				if (c.getChessboard()[y + ((toY - y) / 2)][x] != null) {
 					return false;
 				}
 				c.isKingOrNot(c, toX, toY);
@@ -86,17 +85,17 @@ public class Rule {
 			return false;
 		} else if (subName.equals("Elephant")) {
 			if (color == 0) { // 假如為紅色
-				if (toY < -1 || toY > 9 || toX < 4 || toX > 10) { // 假如沒過河或超過範圍
+				if (toX < -1 || toX > 9 || toY < 4 || toY > 10) { // 假如沒過河或超過範圍
 					return false;
 				}
 			} else if (color == 1) {
-				if (toY < -1 || toY > 9 || toX < -1 || toX > 5) {
+				if (toX < -1 || toX > 9 || toY < -1 || toY > 5) {
 					return false;
 				}
 			}
 			if (Math.abs(toX - x) == 2 && Math.abs(toY - y) == 2) { // 只能斜向移動
 																	// 往右邊移動
-				if (c.getChessboard()[x + (toX - x) / 2][y + (toY - y) / 2] == null) { // 如果沒有塞象眼
+				if (c.getChessboard()[y + (toY - y) / 2][x + (toX - x) / 2] == null) { // 如果沒有塞象眼
 
 					return true;
 				}
@@ -109,7 +108,7 @@ public class Rule {
 
 		} else if (subName.equals("Warrior")) {
 			if (color == 0) { // 假如為紅色
-				if (toX >= 7 && toX <= 9 && toY <= 5 && toY >= 3) { // 判斷是否在九宮格內
+				if (toY >= 7 && toY <= 9 && toX <= 5 && toX >= 3) { // 判斷是否在九宮格內
 					if (Math.abs(toX - x) == 1 && Math.abs(toY - y) == 1) { // 只能斜向移動
 						{
 							return true;
@@ -120,7 +119,7 @@ public class Rule {
 					return false;
 				}
 			} else if (color == 1) {// 假如為黑色
-				if (toX >= 0 && toX <= 2 && toY <= 5 && toY >= 3) {// 判斷是否在九宮格內
+				if (toY >= 0 && toY <= 2 && toX <= 5 && toX >= 3) {// 判斷是否在九宮格內
 					if (Math.abs(toX - x) == 1 && Math.abs(toY - y) == 1) { // 只能斜向移動
 						{
 
@@ -134,7 +133,7 @@ public class Rule {
 			}
 		} else if (subName.equals("King")) {
 			if (color == 0) { // 假如為紅色
-				if (toX < 10 && toX > 6 && toY > 2 && toY < 6) {
+				if (toY < 10 && toY > 6 && toX > 2 && toX < 6) {
 					if (toX == x && Math.abs(toY - y) == 1) { // 只能移動Y軸
 						// c.setLocation(x, y, toX, toY, c);
 						return true;
@@ -146,7 +145,7 @@ public class Rule {
 					return false;
 				}
 			} else if (color == 1) { // 假如為黑色
-				if (toX < 3 && toX > -1 && toY > 2 && toY < 6) {
+				if (toY < 3 && toY > -1 && toX > 2 && toX < 6) {
 					if (toX == x && Math.abs(toY - y) == 1) { // 只能移動Y軸
 						// c.setLocation(x, y, toX, toY, c);
 						return true;
@@ -165,26 +164,26 @@ public class Rule {
 			} else if (toY == y) {
 				grid = Math.abs(toX - x);
 			}
-			if (c.getChessboard()[toX][toY] != null) {
+			if (c.getChessboard()[toY][toX] != null) {
 				count = 0;
 				for (int i = 0; i < grid - 1; i++) {
 					if (toX == x) {
 						if (toY - y < 0) {
-							if (c.getChessboard()[toX][y - 1 - i] != null) {
+							if (c.getChessboard()[y - 1 - i][toX] != null) {
 								count++;
 							}
 						} else {
-							if (c.getChessboard()[toX][y + 1 + i] != null) {
+							if (c.getChessboard()[y + 1 + i][toX] != null) {
 								count++;
 							}
 						}
 					} else if (toY == y) {
 						if (toX - x < 0) {
-							if (c.getChessboard()[toX + 1 + i][y] != null) {
+							if (c.getChessboard()[y][toX + 1 + i] != null) {
 								count++;
 							}
 						} else {
-							if (c.getChessboard()[toX - 1 - i][y] != null) {
+							if (c.getChessboard()[y][toX - 1 - i] != null) {
 								count++;
 							}
 						}
@@ -204,13 +203,13 @@ public class Rule {
 
 				if (toY - y < 0) {
 					for (int i = 0; i < grid - 1; i++) {
-						if (c.getChessboard()[toX][y - 1 - i] != null) {
+						if (c.getChessboard()[y - 1 - i][toX] != null) {
 							return false;
 						}
 					}
 				} else {
 					for (int i = 0; i < grid - 1; i++) {
-						if (c.getChessboard()[toX][y + 1 + i] != null) {
+						if (c.getChessboard()[y + 1 + i][toX] != null) {
 							return false;
 						}
 					}
@@ -221,13 +220,13 @@ public class Rule {
 
 				if (toX - x < 0) {
 					for (int i = 0; i < grid - 1; i++) {
-						if (c.getChessboard()[x - i - 1][toY] != null) {
+						if (c.getChessboard()[toY][x - i - 1] != null) {
 							return false;
 						}
 					}
 				} else {
 					for (int i = 0; i < grid - 1; i++) {
-						if (c.getChessboard()[x + i + 1][toY] != null) {
+						if (c.getChessboard()[toY][x + i + 1] != null) {
 							return false;
 						}
 					}
@@ -238,15 +237,15 @@ public class Rule {
 		} else if (subName.equals("Pawn")) {
 			if (color == 0)// 紅色
 			{
-				if (x > 4)// 只能往前走
+				if (y > 4)// 只能往前走
 				{
-					if (x - toX == 1 && toY == y) {
+					if (y - toY == 1 && toX == x) {
 
 						return true;
 					}
-				} else if (x <= 4) {
+				} else if (y <= 4) {
 					if ((Math.abs(x - toX) + Math.abs(y - toY)) == 1) {
-						if ((x - toX) != -1) {
+						if ((y - toY) != -1) {
 							c.isKingOrNot(c, toX, toY);
 							return true;
 						}
@@ -254,14 +253,14 @@ public class Rule {
 				}
 			} else// 黑色
 			{
-				if (x < 5)// 只能往前走
+				if (y < 5)// 只能往前走
 				{
-					if (toX - x == 1 && toY == y) {
+					if (toY - y == 1 && toX == x) {
 						return true;
 					}
-				} else if (x >= 5) {
+				} else if (y >= 5) {
 					if ((Math.abs(x - toX) + Math.abs(y - toY)) == 1) {
-						if ((x - toX) != 1) {
+						if ((y - toY) != 1) {
 							c.isKingOrNot(c, toX, toY);
 							return true;
 						}
