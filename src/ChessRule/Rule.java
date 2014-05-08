@@ -1,4 +1,5 @@
 package ChessRule;
+
 public class Rule {
 
 	public boolean move(String name, int x, int y, int toX, int toY, int color,
@@ -108,55 +109,35 @@ public class Rule {
 
 		} else if (subName.equals("Warrior")) {
 			if (color == 0) { // 假如為紅色
-				if (toY >= 7 && toY <= 9 && toX <= 5 && toX >= 3) { // 判斷是否在九宮格內
-					if (Math.abs(toX - x) == 1 && Math.abs(toY - y) == 1) { // 只能斜向移動
-						{
-							return true;
-						}
-
-					}
-				} else {
+				if (toY < 7 || toY > 9 || toX > 5 || toX < 3) { // 判斷是否在九宮格內
 					return false;
 				}
 			} else if (color == 1) {// 假如為黑色
-				if (toY >= 0 && toY <= 2 && toX <= 5 && toX >= 3) {// 判斷是否在九宮格內
-					if (Math.abs(toX - x) == 1 && Math.abs(toY - y) == 1) { // 只能斜向移動
-						{
-
-							return true;
-						}
-
-					}
-				} else {
+				if (toY < 0 || toY > 2 || toX > 5 || toX < 3) {// 判斷是否在九宮格內
 					return false;
 				}
 			}
+			if (Math.abs(toX - x) == 1 && Math.abs(toY - y) == 1) { // 只能斜向移動
+				return true;
+			}
 		} else if (subName.equals("King")) {
 			if (color == 0) { // 假如為紅色
-				if (toY < 10 && toY > 6 && toX > 2 && toX < 6) {
-					if (toX == x && Math.abs(toY - y) == 1) { // 只能移動Y軸
-						// c.setLocation(x, y, toX, toY, c);
-						return true;
-					} else if (toY == y && Math.abs(toX - x) == 1) {
-						// c.setLocation(x, y, toX, toY, c);
-						return true;
-					}
-				} else {
+				if (toY > 10 || toY < 7 || toX < 3 || toX > 5) {
 					return false;
 				}
 			} else if (color == 1) { // 假如為黑色
-				if (toY < 3 && toY > -1 && toX > 2 && toX < 6) {
-					if (toX == x && Math.abs(toY - y) == 1) { // 只能移動Y軸
-						// c.setLocation(x, y, toX, toY, c);
-						return true;
-					} else if (toY == y && Math.abs(toX - x) == 1) {
-						// c.setLocation(x, y, toX, toY, c);
-						return true;
-					} else {
-						return false;
-					}
-				} else
+				if (toY > 2 || toY < -1 || toX < 3 || toX > 5) {
 					return false;
+				}
+			}
+			if (toX == x && Math.abs(toY - y) == 1) { // 只能移動Y軸
+
+				return true;
+			} else if (toY == y && Math.abs(toX - x) == 1) {
+				// c.setLocation(x, y, toX, toY, c);
+				return true;
+			} else {
+				return false;
 			}
 		} else if (subName.equals("Cannon")) {
 			if (toX == x) {
