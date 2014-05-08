@@ -37,20 +37,18 @@ public class Rule {
 				grid = Math.abs(toY - y);
 				if (toY - y < 0) {
 					for (int i = 0; i < grid - 1; i++) {
-						if (c.getChessboard()[toX][y + 1 + i] != null) {
+						if (c.getChessboard()[toX][y - 1 - i] != null) {
 							return false;
 						}
 					}
 				} else {
 					for (int i = 0; i < grid - 1; i++) {
-						if (c.getChessboard()[toX][y - 1 - i] != null) {
+						if (c.getChessboard()[toX][y + 1 + i] != null) {
 							return false;
 						}
 					}
 				}
-				if (c.getChessboard()[toX][toY] != null) {
-					c.isKingOrNot(c, toX, toY);
-				}
+				c.isKingOrNot(c, toX, toY);
 				return true;
 			} else if (toY == y)// 只移動x軸座標
 			{
@@ -68,9 +66,7 @@ public class Rule {
 						}
 					}
 				}
-				if (c.getChessboard()[toX][toY] != null) {
-					c.isKingOrNot(c, toX, toY);
-				}
+				c.isKingOrNot(c, toX, toY);
 				return true;
 			}
 		} else if (subName.equals("Horse")) {
@@ -78,127 +74,44 @@ public class Rule {
 				if (c.getChessboard()[x + ((toX - x) / 2)][y] != null) {
 					return false;
 				}
-				if (c.getChessboard()[toX][toY] != null) {
-					c.isKingOrNot(c, toX, toY);
-				}
+				c.isKingOrNot(c, toX, toY);
 				return true;
 			} else if (Math.abs(toY - y) == 2 && Math.abs(toX - x) == 1) {
 				if (c.getChessboard()[x][y + ((toY - y) / 2)] != null) {
 					return false;
 				}
-				if (c.getChessboard()[toX][toY] != null) {
-					c.isKingOrNot(c, toX, toY);
-				}
+				c.isKingOrNot(c, toX, toY);
 				return true;
 			}
 			return false;
 		} else if (subName.equals("Elephant")) {
 			if (color == 0) { // 假如為紅色
-				if (toY > -1 && toY < 9 && toX > 4 && toX < 10) { // 假如沒過河或超過範圍
-
-					if ((x + 2) == toX && y + 2 == toY) { // 只能斜向移動 往右邊移動
-						if (c.getChessboard()[x + 1][y + 1] == null) { // 如果沒有塞象眼
-							{
-								
-								return true;
-							}
-
-						} else {
-							return false;
-						}
-					} else if ((x - 2) == toX && y + 2 == toY)// 往左邊移動
-					{
-						if (c.getChessboard()[x - 1][y + 1] == null) { // 如果沒有塞象眼
-							{
-								
-								return true;
-							}
-
-						} else {
-							return false;
-						}
-					} else if ((x - 2) == toX && y - 2 == toY) { // 只能斜向移動
-						if (c.getChessboard()[x - 1][y - 1] == null) { // 如果沒有塞象眼
-							{
-								
-								return true;
-							}
-
-						} else {
-							return false;
-						}
-					} else if ((x + 2) == toX && y - 2 == toY) { // 只能斜向移動
-						if (c.getChessboard()[x + 1][y - 1] == null) { // 如果沒有塞象眼
-							{
-								
-								return true;
-							}
-
-						} else {
-							return false;
-						}
-					} else {
-						return false;
-					}
-				} else {
+				if (toY < -1 || toY > 9 || toX < 4 || toX > 10) { // 假如沒過河或超過範圍
 					return false;
 				}
-			} else if (color == 1) {// 假如為黑色
-				if (toY > -1 && toY < 9 && toX > -1 && toX < 5) { // 假如沒過河或超過範圍
-					if ((x + 2) == toX && y + 2 == toY) { // 只能斜向移動
-						if (c.getChessboard()[x + 1][y + 1] == null) { // 如果沒有塞象眼
-							{
-								
-								return true;
-							}
-
-						} else {
-							return false;
-						}
-					} else if ((x - 2) == toX && y + 2 == toY)// 往左邊移動
-					{
-						if (c.getChessboard()[x - 1][y + 1] == null) { // 如果沒有塞象眼
-							{
-								
-								return true;
-							}
-
-						} else {
-							return false;
-						}
-					} else if ((x - 2) == toX && y - 2 == toY) { // 只能斜向移動
-						if (c.getChessboard()[x - 1][y - 1] == null) { // 如果沒有塞象眼
-							{
-								
-								return true;
-							}
-
-						} else {
-							return false;
-						}
-					} else if ((x + 2) == toX && y - 2 == toY) { // 只能斜向移動
-						if (c.getChessboard()[x + 1][y - 1] == null) { // 如果沒有塞象眼
-							{
-								
-								return true;
-							}
-
-						} else {
-							return false;
-						}
-					} else {
-						return false;
-					}
-				} else {
+			} else if (color == 1) {
+				if (toY < -1 || toY > 9 || toX < -1 || toX > 5) {
 					return false;
 				}
 			}
+			if (Math.abs(toX - x) == 2 && Math.abs(toY - y) == 2) { // 只能斜向移動
+																	// 往右邊移動
+				if (c.getChessboard()[x + (toX - x) / 2][y + (toY - y) / 2] == null) { // 如果沒有塞象眼
+
+					return true;
+				}
+
+				else {
+					return false;
+				}
+			} else
+				return false;
+
 		} else if (subName.equals("Warrior")) {
 			if (color == 0) { // 假如為紅色
 				if (toX >= 7 && toX <= 9 && toY <= 5 && toY >= 3) { // 判斷是否在九宮格內
 					if (Math.abs(toX - x) == 1 && Math.abs(toY - y) == 1) { // 只能斜向移動
 						{
-							
 							return true;
 						}
 
@@ -210,7 +123,7 @@ public class Rule {
 				if (toX >= 0 && toX <= 2 && toY <= 5 && toY >= 3) {// 判斷是否在九宮格內
 					if (Math.abs(toX - x) == 1 && Math.abs(toY - y) == 1) { // 只能斜向移動
 						{
-							
+
 							return true;
 						}
 
@@ -243,7 +156,8 @@ public class Rule {
 					} else {
 						return false;
 					}
-				}
+				} else
+					return false;
 			}
 		} else if (subName.equals("Cannon")) {
 			if (toX == x) {
@@ -279,9 +193,7 @@ public class Rule {
 				}
 
 				if (count == 1 && (toX == x || toY == y)) {
-					if (c.getChessboard()[toX][toY] != null) {
-						c.isKingOrNot(c, toX, toY);
-					}
+					c.isKingOrNot(c, toX, toY);
 					return true;
 				} else {
 					return false;
@@ -335,9 +247,7 @@ public class Rule {
 				} else if (x <= 4) {
 					if ((Math.abs(x - toX) + Math.abs(y - toY)) == 1) {
 						if ((x - toX) != -1) {
-							if (c.getChessboard()[toX][toY] != null) {
-								c.isKingOrNot(c, toX, toY);
-							}
+							c.isKingOrNot(c, toX, toY);
 							return true;
 						}
 					}
@@ -352,9 +262,7 @@ public class Rule {
 				} else if (x >= 5) {
 					if ((Math.abs(x - toX) + Math.abs(y - toY)) == 1) {
 						if ((x - toX) != 1) {
-							if (c.getChessboard()[toX][toY] != null) {
-								c.isKingOrNot(c, toX, toY);
-							}
+							c.isKingOrNot(c, toX, toY);
 							return true;
 						}
 					}
@@ -364,5 +272,4 @@ public class Rule {
 		return false;
 	}
 
-	
 }

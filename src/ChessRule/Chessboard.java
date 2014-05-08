@@ -1,6 +1,5 @@
 package ChessRule;
 
-
 public class Chessboard {
 	Chess[][] p= new Chess[10][9];
 	
@@ -36,6 +35,8 @@ public class Chessboard {
 	private Chess redWarrior2;
 	private Chess blackWarrior1;
 	private Chess blackWarrior2;
+
+
 	public Chessboard()
 	{
 		initChess();
@@ -129,13 +130,19 @@ public class Chessboard {
 	}
 
 	public boolean isKingOrNot(Chessboard c, int toX, int toY) {
-		if (c.getChessboard()[toX][toY].getName().equals("redKing")
+		if(c.getChessboard()[toX][toY] == null)
+		{
+			return false;
+		}
+			
+		else if (c.getChessboard()[toX][toY].getName().equals("redKing")
 				|| c.getChessboard()[toX][toY].getName().equals("blackKing")) {
 			c.getChessboard()[toX][toY].setDead();
 			return true;
 
 		}
-		return false;
+		else
+			return false;
 
 	}
 }
