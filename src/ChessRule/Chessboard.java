@@ -1,5 +1,7 @@
 package ChessRule;
 
+import ChessRule.Chess;
+
 public class Chessboard {
 	Chess[][] p = new Chess[10][9];// Y X
 
@@ -76,7 +78,7 @@ public class Chessboard {
 		p[9][0] = redRook1;
 		p[9][8] = redRook2;
 		p[0][0] = blackRook1;
-		p[0][8] = blackRook1;
+		p[0][8] = blackRook2;
 		p[9][1] = redHorse1;
 		p[9][7] = redHorse2;
 		p[0][1] = blackHorse1;
@@ -127,6 +129,20 @@ public class Chessboard {
 		return false;
 	}
 
+	public void printChessBoard() {
+		for (int i = 0; i < 10; i++) {
+			for (int j = 0; j < 9; j++) {
+				if (p[i][j] != null) {
+					System.out.print(p[i][j].getName() + "\t");
+				} else {
+					System.out.print("null\t\t");
+				}
+
+			}
+			System.out.println();
+		}
+	}
+	
 	public boolean isKingOrNot(Chessboard c, int toX, int toY) {
 		if (c.getChessboard()[toY][toX] == null) {
 			return false;

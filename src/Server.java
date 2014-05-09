@@ -4,7 +4,6 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import net.MessagePack;
@@ -89,11 +88,8 @@ public class Server {
 						remove.add(s1);
 						remove.add(s2);
 						al.removeAll(remove);
-//						al.remove(s1);
-//						al.remove(s2);
 						System.out.println("bridge");
 						new Thread(new Runnable() {
-
 							@Override
 							public void run() {
 								// TODO Auto-generated method stub

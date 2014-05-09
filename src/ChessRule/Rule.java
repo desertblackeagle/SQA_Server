@@ -1,5 +1,6 @@
 package ChessRule;
 
+
 public class Rule {
 
 	public boolean move(String name, int x, int y, int toX, int toY, int color,
