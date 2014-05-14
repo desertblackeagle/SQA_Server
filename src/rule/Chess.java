@@ -1,4 +1,5 @@
-package ChessRule;
+package rule;
+
 public class Chess {
 	private String name;
 	private int color;
@@ -16,15 +17,16 @@ public class Chess {
 		return this.name;
 	}
 
-	public void setDead() {
+	public void setDead()
+	{
 		this.dead = true;
 	}
-
-	public boolean getDead() {
-		return this.dead;
+	public boolean getDead()
+	{
+		return this.dead ;
 	}
-
-	public int getColor() {
-		return this.color;
+	public int getColor()
+	{
+		return this.color ;
 	}
 }

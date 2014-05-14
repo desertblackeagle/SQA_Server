@@ -1,6 +1,4 @@
-package ChessRule;
-
-import ChessRule.Chess;
+package rule;
 
 public class Chessboard {
 	Chess[][] p = new Chess[10][9];// Y X
@@ -78,7 +76,7 @@ public class Chessboard {
 		p[9][0] = redRook1;
 		p[9][8] = redRook2;
 		p[0][0] = blackRook1;
-		p[0][8] = blackRook2;
+		p[0][8] = blackRook1;
 		p[9][1] = redHorse1;
 		p[9][7] = redHorse2;
 		p[0][1] = blackHorse1;
@@ -142,14 +140,13 @@ public class Chessboard {
 			System.out.println();
 		}
 	}
-	
+
 	public boolean isKingOrNot(Chessboard c, int toX, int toY) {
 		if (c.getChessboard()[toY][toX] == null) {
 			return false;
 		}
 
-		else if (c.getChessboard()[toY][toX].getName().equals("redKing")
-				|| c.getChessboard()[toY][toX].getName().equals("blackKing")) {
+		else if (c.getChessboard()[toY][toX].getName().equals("redKing") || c.getChessboard()[toY][toX].getName().equals("blackKing")) {
 			c.getChessboard()[toY][toX].setDead();
 			return true;
 

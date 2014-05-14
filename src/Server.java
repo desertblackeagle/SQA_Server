@@ -1,12 +1,15 @@
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import net.MessagePack;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Server {
 	private ServerSocket serverSocket;
@@ -22,6 +25,7 @@ public class Server {
 			public void run() {
 				try {
 					serverSocket = new ServerSocket(56);
+					System.out.println("server start");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -33,17 +37,20 @@ public class Server {
 			}
 		}).start();
 		match();
+
 	}
 
-	private boolean check(ObjectInputStream in) {
+	private boolean check(BufferedReader clientReader) {
+		JSONObject check;
 		try {
-			MessagePack check = (MessagePack) in.readObject();
-			if (check.getAction().equals("check")) {
-				String apiToken = check.getObjectHashMap().get("API Token").toString();
-				String userToken = check.getObjectHashMap().get("User Token").toString();
+			check = new JSONObject(clientReader.readLine());
+			System.out.println("check : " + check);
+			if (check.get("action").equals("check")) {
+				String apiToken = check.get("API Token").toString();
+				String userToken = check.get("User Token").toString();
 				System.out.println(apiToken + " " + userToken);
 			}
-		} catch (ClassNotFoundException e) {
+		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -54,20 +61,20 @@ public class Server {
 	}
 
 	private void waitForClient() {
-
+		JSONObject sendToClient = new JSONObject();
 		try {
 			server = serverSocket.accept();
-			ObjectInputStream in = new ObjectInputStream(server.getInputStream());
-			ObjectOutputStream output = new ObjectOutputStream(server.getOutputStream());
+			BufferedReader clientReader = new BufferedReader(new InputStreamReader(server.getInputStream(), "utf-8"));
+			PrintStream clientWriter = new PrintStream(server.getOutputStream(), true, "utf-8");
 			System.out.println("Address : " + server.getInetAddress());
-			if (check(in)) {
-				SocketPack sp = new SocketPack(server, in, output);
+			if (check(clientReader)) {
+				SocketPack sp = new SocketPack(server, clientReader, clientWriter);
 				al.add(sp);
 				System.out.println("Add suss ");
 			} else {
-				output.writeObject(new MessagePack("check fail"));
+				sendToClient.put("action", "check fail");
+				clientWriter.println(sendToClient.toString());
 			}
-
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -81,14 +88,12 @@ public class Server {
 					Thread.interrupted();
 //					System.out.println("al is less 2 " + a);
 					if (al.size() >= 2) {
-
 						s1 = al.get(0);
 						s2 = al.get(1);
 						List<SocketPack> remove = new ArrayList<SocketPack>();
 						remove.add(s1);
 						remove.add(s2);
 						al.removeAll(remove);
-						System.out.println("bridge");
 						new Thread(new Runnable() {
 							@Override
 							public void run() {
@@ -96,7 +101,6 @@ public class Server {
 								bridge = new ClientBridge(s1, s2);
 							}
 						}).start();
-
 					} else {
 					}
 				}

@@ -1,5 +1,4 @@
-package ChessRule;
-
+package rule;
 
 public class Rule {
 

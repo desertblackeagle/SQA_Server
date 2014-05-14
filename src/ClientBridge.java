@@ -1,200 +1,206 @@
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.net.SocketException;
+import java.io.PrintStream;
 
-import net.MessagePack;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import rule.Chessboard;
+import rule.Rule;
 
 public class ClientBridge {
-	private Socket clientA, clientB;
-	private ObjectInputStream clientObjInputStreamA, clientObjInputStreamB;
-	private ObjectOutputStream clientObjOutputStreamA, clientObjOutputStreamB;
-	private Thread t;
-	boolean flag = true;
-	private MessagePack sendStart;
+	private BufferedReader clientAReader, clientBReader;
+	private PrintStream clientAWriter, clientBWriter;
 	private String APITokenA, APITokenB;
 	private String userTokenA, userTokenB;
 	private String playerAName, playerBName;
 	private String playerPhotoA, playerPhotoB;
+	private String playerAWin, playerBWin;
+	private String playerALose, playerBLose;
+	private Rule rule;
+	private Chessboard chessBoard;
+	private int whoseTurn = 0;
+	private DataBase playerDataBase;
 
 	public ClientBridge(SocketPack clientA, SocketPack clientB) {
 		// TODO Auto-generated constructor stub
-		System.out.println("Bridge ing");
-		this.clientA = clientA.getSocket();
-		this.clientB = clientB.getSocket();
+		System.out.println("Bridge");
+		chessBoard = new Chessboard();
+		rule = new Rule();
+		playerDataBase = new DataBase();
 
-		clientObjInputStreamA = clientA.getOis();
-		clientObjOutputStreamA = clientA.getOos();
-		clientObjInputStreamB = clientB.getOis();
-		clientObjOutputStreamB = clientB.getOos();
-		sendStart = new MessagePack("get info");
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				try {
-					clientObjOutputStreamA.writeObject(sendStart);
-					System.out.println("Send get info to A");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}).start();
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				try {
-					clientObjOutputStreamB.writeObject(sendStart);
-					System.out.println("Send get info to B");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}).start();
+		clientAReader = clientA.getClientReader();
+		clientAWriter = clientA.getClientWriter();
+		clientBWriter = clientB.getClientWriter();
+		clientBReader = clientB.getClientReader();
 
-		System.out.println("exe thread A");
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				System.out.println("Thread A start");
 				talkToA();
 			}
 		}).start();
-		System.out.println("exe thread B");
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				System.out.println("Thread B start");
 				talkToB();
 			}
 		}).start();
-
 	}
 
 	private void talkToA() {
-		MessagePack msgPack;
+		System.out.println("start talk to A");
+		getClientInfo("A");
+		JSONObject clientMsg;
+		String clientInput;
 		try {
-			while ((msgPack = (MessagePack) clientObjInputStreamA.readObject()) != null) {
+			while ((clientInput = clientAReader.readLine()) != null) {
 				Thread.interrupted();
-				System.out.println("A : " + msgPack);
-				if (msgPack.getAction().equals("move")) {
-					System.out.println(msgPack.getObjectHashMap().get("chess name"));
-					System.out.println(msgPack.getObjectHashMap().get("chess X"));
-					System.out.println(msgPack.getObjectHashMap().get("chess Y"));
-					System.out.println(msgPack.getObjectHashMap().get("chess toX"));
-					System.out.println(msgPack.getObjectHashMap().get("chess toY"));
-					System.out.println(msgPack.getObjectHashMap().get("chess color"));
-					//
-					// 呼叫判斷副函式
-					//
-					MessagePack send = new MessagePack("move");
-					send.addData("chess X", msgPack.getObjectHashMap().get("chess X"));
-					send.addData("chess Y", msgPack.getObjectHashMap().get("chess Y"));
-					send.addData("chess toX", msgPack.getObjectHashMap().get("chess toX"));
-					send.addData("chess toY", msgPack.getObjectHashMap().get("chess toY"));
-					clientObjOutputStreamA.writeObject(send);
-					clientObjOutputStreamB.writeObject(send);
-				} else if (msgPack.getAction().equals("chat")) {
-					String chat = (String) msgPack.getObjectHashMap().get("chat msg");
-					MessagePack sendToB = new MessagePack("chat");
-					sendToB.addData("chat msg", chat);
-					clientObjOutputStreamB.writeObject(sendToB);
-				} else if (msgPack.getAction().equals("sayBye")) {
+				System.out.println("msg from client A : " + clientInput);
+				clientMsg = new JSONObject(clientInput);
+				if (clientMsg.get("action").equals("move")) {
+					clientMoveAction(clientMsg, clientAWriter, clientBWriter);
+				} else if (clientMsg.get("action").equals("chat")) {
+					clientChatAction(clientMsg, clientBWriter);
+				} else if (clientMsg.get("action").equals("sayBye")) {
 
-				} else if (msgPack.getAction().equals("give info")) {
-					APITokenB = msgPack.getObjectHashMap().get("API Token").toString();
-					userTokenB = msgPack.getObjectHashMap().get("User Token").toString();
-					playerBName = msgPack.getObjectHashMap().get("player name").toString();
-					playerPhotoB = msgPack.getObjectHashMap().get("player photo").toString();
-					System.out.println(APITokenB);
-					System.out.println(userTokenB);
-					System.out.println(playerBName);
-					System.out.println(playerPhotoB);
-					MessagePack sendToB = new MessagePack("rival info");
-					sendToB.addData("player name", playerBName);
-					sendToB.addData("player photo", playerPhotoB);
-					sendToB.addData("team", 1);
-					clientObjOutputStreamB.writeObject(sendToB);
+				} else if (clientMsg.get("action").equals("give info")) {
+					clientGiveInfoAction(clientMsg, clientAWriter, clientBWriter, 1);
 				}
 			}
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.println("A is close");
-		} catch (ClassNotFoundException e) {
+		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			System.out.println("client B is disconnect");
 			e.printStackTrace();
 		}
 	}
 
 	private void talkToB() {
-		MessagePack msgPack;
+		System.out.println("start talk to B");
+		getClientInfo("B");
+		JSONObject clientMsg;
+		String clientInput;
 		try {
-			while ((msgPack = (MessagePack) clientObjInputStreamB.readObject()) != null) {
+			while ((clientInput = clientBReader.readLine()) != null) {
 				Thread.interrupted();
-				System.out.println("B : " + msgPack);
-				if (msgPack.getAction().equals("move")) {
-					System.out.println(msgPack.getObjectHashMap().get("chess name"));
-					System.out.println(msgPack.getObjectHashMap().get("chess X"));
-					System.out.println(msgPack.getObjectHashMap().get("chess Y"));
-					System.out.println(msgPack.getObjectHashMap().get("chess toX"));
-					System.out.println(msgPack.getObjectHashMap().get("chess toY"));
-					System.out.println(msgPack.getObjectHashMap().get("chess color"));
-					//
-					// 呼叫判斷副函式
-					//
-					MessagePack send = new MessagePack("move");
-					send.addData("chess X", msgPack.getObjectHashMap().get("chess X"));
-					send.addData("chess Y", msgPack.getObjectHashMap().get("chess Y"));
-					send.addData("chess toX", msgPack.getObjectHashMap().get("chess toX"));
-					send.addData("chess toY", msgPack.getObjectHashMap().get("chess toY"));
-					clientObjOutputStreamA.writeObject(send);
-					clientObjOutputStreamB.writeObject(send);
-				} else if (msgPack.getAction().equals("chat")) {
-					String chat = (String) msgPack.getObjectHashMap().get("chat msg");
-					MessagePack sendToA = new MessagePack("chat");
-					sendToA.addData("chat msg", chat);
-					clientObjOutputStreamA.writeObject(sendToA);
-				} else if (msgPack.getAction().equals("sayBye")) {
+				System.out.println("msg from client B : " + clientInput);
+				clientMsg = new JSONObject(clientInput);
+				if (clientMsg.get("action").equals("move")) {
+					clientMoveAction(clientMsg, clientBWriter, clientAWriter);
+				} else if (clientMsg.get("action").equals("chat")) {
+					clientChatAction(clientMsg, clientAWriter);
+				} else if (clientMsg.get("action").equals("sayBye")) {
 
-				} else if (msgPack.getAction().equals("give info")) {
-					APITokenA = msgPack.getObjectHashMap().get("API Token").toString();
-					userTokenA = msgPack.getObjectHashMap().get("User Token").toString();
-					playerAName = msgPack.getObjectHashMap().get("player name").toString();
-					playerPhotoA = msgPack.getObjectHashMap().get("player photo").toString();
-					System.out.println(APITokenA);
-					System.out.println(userTokenA);
-					System.out.println(playerAName);
-					System.out.println(playerPhotoA);
-					MessagePack sendToA = new MessagePack("rival info");
-					sendToA.addData("player name", playerAName);
-					sendToA.addData("player photo", playerPhotoA);
-					sendToA.addData("team", 0);
-					clientObjOutputStreamA.writeObject(sendToA);
+				} else if (clientMsg.get("action").equals("give info")) {
+					clientGiveInfoAction(clientMsg, clientBWriter, clientAWriter, 0);
 				}
 			}
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.println("B is close");
-		} catch (ClassNotFoundException e) {
+		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			System.out.println("client B is disconnect");
 			e.printStackTrace();
 		}
 	}
 
+	private void getClientInfo(String aOrB) {
+		if (aOrB.equals("A")) {
+			JSONObject getInfoFromClient = new JSONObject();
+			getInfoFromClient.put("action", "get info");
+			clientAWriter.println(getInfoFromClient);
+			System.out.println("tell A to give info " + getInfoFromClient);
+		} else {
+			JSONObject getInfoFromClient = new JSONObject();
+			getInfoFromClient.put("action", "get info");
+			clientBWriter.println(getInfoFromClient);
+			System.out.println("tell B to give info " + getInfoFromClient);
+		}
+	}
+
+	private void clientMoveAction(JSONObject clientMsg, PrintStream from, PrintStream to) {
+		System.out.println("move detail from client");
+		System.out.println("chess name : " + clientMsg.get("chess name"));
+		System.out.println("chess from x : " + clientMsg.get("chess X"));
+		System.out.println("chess from y : " + clientMsg.get("chess Y"));
+		System.out.println("chess to x : " + clientMsg.get("chess toX"));
+		System.out.println("chess to y : " + clientMsg.get("chess toY"));
+		System.out.println("chess color : " + clientMsg.get("chess color"));
+		String chessName = (String) clientMsg.get("chess name");
+		int x = (Integer) clientMsg.get("chess X");
+		int y = (Integer) clientMsg.get("chess Y");
+		int toX = (Integer) clientMsg.get("chess toX");
+		int toY = (Integer) clientMsg.get("chess toY");
+		int color = (Integer) clientMsg.get("chess color");
+		if (rule.move(chessName, x, y, toX, toY, color, chessBoard, whoseTurn)) {
+			chessBoard.setLocation(x, y, toX, toY, chessBoard);
+			chessBoard.printChessBoard();
+			whoseTurn = whoseTurn ^ 1;
+			System.out.println("whoseTurn : " + whoseTurn);
+			JSONObject sendToClient = new JSONObject();
+			sendToClient.put("action", "move");
+			sendToClient.put("chess X", clientMsg.get("chess X"));
+			sendToClient.put("chess Y", clientMsg.get("chess Y"));
+			sendToClient.put("chess toX", clientMsg.get("chess toX"));
+			sendToClient.put("chess toY", clientMsg.get("chess toY"));
+			from.println(sendToClient);
+			to.println(sendToClient);
+			System.out.println("tell client A&B move : " + sendToClient);
+		} else {
+			JSONObject sendToClient = new JSONObject();
+			sendToClient.put("action", "move");
+			sendToClient.put("chess X", clientMsg.get("chess X"));
+			sendToClient.put("chess Y", clientMsg.get("chess Y"));
+			sendToClient.put("chess toX", clientMsg.get("chess X"));
+			sendToClient.put("chess toY", clientMsg.get("chess Y"));
+			from.println(sendToClient);
+			System.out.println("ilegal move !! tell client move back : " + sendToClient);
+		}
+	}
+
+	private void clientChatAction(JSONObject clientMsg, PrintStream to) {
+		String chat = (String) clientMsg.get("chat msg");
+		JSONObject sendToClient = new JSONObject();
+		sendToClient.put("action", "chat");
+		sendToClient.put("chat msg", chat);
+		to.println(sendToClient);
+		System.out.println("tell client chat msg : " + sendToClient);
+	}
+
+	private void clientGiveInfoAction(JSONObject clientMsg, PrintStream from, PrintStream to, int team) {
+		String APIToken = clientMsg.get("API Token").toString();
+		String userToken = clientMsg.get("User Token").toString();
+		String playerName = clientMsg.get("player name").toString();
+		String playerPhoto = clientMsg.get("player photo").toString();
+		String playerWin = playerDataBase.getPlayerWin(APIToken);
+		String playerLose = playerDataBase.getPlayerLose(APIToken);
+		JSONObject sendToFrom = new JSONObject();
+		sendToFrom.put("action", "winAndLose");
+		sendToFrom.put("player win", playerWin);
+		sendToFrom.put("player lose", playerLose);
+		from.println(sendToFrom);
+		System.out.println("from player win and lose" + playerWin + " " + playerLose);
+
+		System.out.println(playerName);
+		System.out.println(APIToken);
+		System.out.println(userToken);
+		System.out.println(playerPhoto + "\n");
+		JSONObject sendTo = new JSONObject();
+		sendTo.put("action", "rival info");
+		sendTo.put("player name", playerName);
+		sendTo.put("player photo", playerPhoto);
+		sendTo.put("player win", playerWin);
+		sendTo.put("player lose", playerLose);
+		sendTo.put("team", team);
+		to.println(sendTo);
+		System.out.println("tell client rival info : " + sendTo);
+	}
 }

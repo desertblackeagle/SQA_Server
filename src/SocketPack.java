@@ -1,30 +1,32 @@
-
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintStream;
 import java.net.Socket;
 
 public class SocketPack {
 	private Socket socket;
-	private ObjectInputStream ois;
-	private ObjectOutputStream oos;
+	private BufferedReader clientReader;
+	private PrintStream clientWriter;
 
-	public SocketPack(Socket socket, ObjectInputStream ois, ObjectOutputStream oos) {
+	public SocketPack(Socket socket, final BufferedReader clientReader, PrintStream clientWriter) {
 		// TODO Auto-generated constructor stub
 		this.socket = socket;
-		this.ois = ois;
-		this.oos = oos;
+		this.clientReader = clientReader;
+		this.clientWriter = clientWriter;
 	}
 
 	public Socket getSocket() {
 		return socket;
 	}
 
-	public ObjectInputStream getOis() {
-		return ois;
+	public BufferedReader getClientReader() {
+		return clientReader;
 	}
 
-	public ObjectOutputStream getOos() {
-		return oos;
+	public PrintStream getClientWriter() {
+		return clientWriter;
 	}
 
 }
