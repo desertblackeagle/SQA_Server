@@ -43,6 +43,7 @@ public class DataBase {
 			System.out.println("資料庫無法連線!!!連線至DataBase2");
 			try {
 				con = DriverManager.getConnection("jdbc:mysql://123.204.84.144/chinese_game_server?useUnicode=true&characterEncoding=Big5", "michael", "123456");
+				System.out.println("資料庫連線成功");
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 //				e.printStackTrace();
