@@ -50,7 +50,7 @@ public class Rule {
 				}
 				c.isKingOrNot(c, toX, toY);
 				return true;
-			} else if (toY == y)// 只移動x軸座標
+			} else // 只移動x軸座標
 			{
 				grid = Math.abs(toX - x);
 				if (toX - x < 0) {
@@ -86,11 +86,11 @@ public class Rule {
 			return false;
 		} else if (subName.equals("Elephant")) {
 			if (color == 0) { // 假如為紅色
-				if (toX < -1 || toX > 9 || toY < 4 || toY > 10) { // 假如沒過河或超過範圍
+				if (toY <= 4) { // 假如沒過河或超過範圍
 					return false;
 				}
-			} else if (color == 1) {
-				if (toX < -1 || toX > 9 || toY < -1 || toY > 5) {
+			} else {
+				if (toY >= 5) {
 					return false;
 				}
 			}
@@ -108,33 +108,40 @@ public class Rule {
 				return false;
 
 		} else if (subName.equals("Warrior")) {
-			if (color == 0) { // 假如為紅色
-				if (toY < 7 || toY > 9 || toX > 5 || toX < 3) { // 判斷是否在九宮格內
-					return false;
-				}
-			} else if (color == 1) {// 假如為黑色
-				if (toY < 0 || toY > 2 || toX > 5 || toX < 3) {// 判斷是否在九宮格內
-					return false;
+			if (toX > 5 || toX < 3)
+				return false;
+			else {
+				if (color == 0) { // 假如為紅色
+					if (toY <= 6) { // 判斷是否在九宮格內
+						return false;
+					}
+				} else {// 假如為黑色
+					if (toY >= 3) {// 判斷是否在九宮格內
+						return false;
+					}
 				}
 			}
+
 			if (Math.abs(toX - x) == 1 && Math.abs(toY - y) == 1) { // 只能斜向移動
 				return true;
 			}
 		} else if (subName.equals("King")) {
-			if (color == 0) { // 假如為紅色
-				if (toY > 10 || toY < 7 || toX < 3 || toX > 5) {
-					return false;
-				}
-			} else if (color == 1) { // 假如為黑色
-				if (toY > 2 || toY < -1 || toX < 3 || toX > 5) {
-					return false;
+			if (toX < 3 || toX > 5)
+				return false;
+			else {
+				if (color == 0) { // 假如為紅色
+					if (toY <= 6) {
+						return false;
+					}
+				} else { // 假如為黑色
+					if (toY >= 3) {
+						return false;
+					}
 				}
 			}
-			if (toX == x && Math.abs(toY - y) == 1) { // 只能移動Y軸
 
-				return true;
-			} else if (toY == y && Math.abs(toX - x) == 1) {
-				// c.setLocation(x, y, toX, toY, c);
+			if ((Math.abs(toX - x)) + (Math.abs(toY - y)) == 1) { // 只能移動Y軸
+
 				return true;
 			} else {
 				return false;
@@ -142,7 +149,7 @@ public class Rule {
 		} else if (subName.equals("Cannon")) {
 			if (toX == x) {
 				grid = Math.abs(toY - y);
-			} else if (toY == y) {
+			} else {
 				grid = Math.abs(toX - x);
 			}
 			if (c.getChessboard()[toY][toX] != null) {
@@ -158,7 +165,7 @@ public class Rule {
 								count++;
 							}
 						}
-					} else if (toY == y) {
+					} else {
 						if (toX - x < 0) {
 							if (c.getChessboard()[y][toX + 1 + i] != null) {
 								count++;
@@ -169,10 +176,8 @@ public class Rule {
 							}
 						}
 					}
-
 				}
-
-				if (count == 1 && (toX == x || toY == y)) {
+				if (count == 1) {
 					c.isKingOrNot(c, toX, toY);
 					return true;
 				} else {
@@ -196,7 +201,7 @@ public class Rule {
 					}
 				}
 				return true;
-			} else if (toY == y)// 只移動x軸座標
+			} else // 只移動x軸座標
 			{
 
 				if (toX - x < 0) {
@@ -215,7 +220,7 @@ public class Rule {
 				return true;
 			}
 
-		} else if (subName.equals("Pawn")) {
+		} else {// subName.equals("Pawn")
 			if (color == 0)// 紅色
 			{
 				if (y > 4)// 只能往前走
@@ -224,7 +229,7 @@ public class Rule {
 
 						return true;
 					}
-				} else if (y <= 4) {
+				} else {// y <= 4
 					if ((Math.abs(x - toX) + Math.abs(y - toY)) == 1) {
 						if ((y - toY) != -1) {
 							c.isKingOrNot(c, toX, toY);
@@ -239,7 +244,7 @@ public class Rule {
 					if (toY - y == 1 && toX == x) {
 						return true;
 					}
-				} else if (y >= 5) {
+				} else {// y >= 5
 					if ((Math.abs(x - toX) + Math.abs(y - toY)) == 1) {
 						if ((y - toY) != 1) {
 							c.isKingOrNot(c, toX, toY);
@@ -251,5 +256,4 @@ public class Rule {
 		}
 		return false;
 	}
-
 }
