@@ -40,9 +40,17 @@ public class DataBase {
 		}// 有可能會產生sqlexception
 		catch (SQLException x) {
 			System.out.println("Exception :" + x.toString());
-			System.out.println("資料庫無法連線!!!");
-			System.out.println("請檢查帳號及密碼是否有誤，");
-			System.out.println("或者mysql服務是否關閉。");
+			System.out.println("資料庫無法連線!!!連線至DataBase2");
+			try {
+				con = DriverManager.getConnection("jdbc:mysql://123.204.84.144/chinese_game_server?useUnicode=true&characterEncoding=Big5", "michael", "123456");
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+//				e.printStackTrace();
+				System.out.println("Exception :" + x.toString());
+				System.out.println("資料庫無法連線!!!");
+				System.out.println("請檢查帳號及密碼是否有誤，");
+				System.out.println("或者mysql服務是否關閉。");
+			}
 		}
 
 	}
