@@ -16,13 +16,9 @@ public class DataBase {
 	// 執行,傳入之sql為預儲之字申,需要傳入變數之位置
 	// 先利用?來做標示
 
-	private String dropdbSQL = "DROP TABLE User ";
+	private String insertPlayerInfo = "INSERT INTO chinese_game_server.PlayerInfo (APIToken ,win ,lose)VALUES (?, ?, ?);";
 
-	private String createdbSQL = "CREATE TABLE User (" + "    id     INTEGER " + "  , name    VARCHAR(20) " + "  , passwd  VARCHAR(20))";
-
-	private String insertdbSQL = "insert into User(id,name,passwd) " + "select ifNULL(max(id),0)+1,?,? FROM User";
-
-	private String selectSQL = "select * from User ";
+	private String updatePlayerInfo = "UPDATE  chinese_game_server.PlayerInfo SET win = ? , lose = ? WHERE APIToken = ?";
 
 	public DataBase() {
 		try {
@@ -56,24 +52,40 @@ public class DataBase {
 
 	}
 
-	// 新增資料
-	// 可以看看PrepareStatement的使用方式
-	public void insertTable(String name, String passwd) {
+	public void updatePlayerWinAndLose(String APIToken, String win, String lose) {
 		try {
-			pst = con.prepareStatement(insertdbSQL);
-
-			pst.setString(1, name);
-			pst.setString(2, passwd);
+			pst = con.prepareStatement(updatePlayerInfo);
+			pst.setString(1, win);
+			pst.setString(2, lose);
+			pst.setString(3, APIToken);
 			pst.executeUpdate();
 		} catch (SQLException e) {
+			System.out.println(e.getLocalizedMessage());
 			System.out.println("InsertDB Exception :" + e.toString());
 		} finally {
 			Close();
 		}
 	}
 
-	public String getPlayerWin(String userToken) {
-		String SQL = "SELECT win FROM `PlayerInfo` WHERE UserToken=" + userToken + ";";
+	// 新增資料
+	// 可以看看PrepareStatement的使用方式
+	public void insertPlayerWinAndLose(String APIToken, String win, String lose) {
+		try {
+			pst = con.prepareStatement(insertPlayerInfo);
+			pst.setString(1, APIToken);
+			pst.setString(2, win);
+			pst.setString(3, lose);
+			pst.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println(e.getLocalizedMessage());
+			System.out.println("InsertDB Exception :" + e.toString());
+		} finally {
+			Close();
+		}
+	}
+
+	public String getPlayerWin(String apiToken) {
+		String SQL = "SELECT win FROM `PlayerInfo` WHERE APIToken=" + apiToken + ";";
 		String win = null;
 		Statement stmt = null;
 		try {
@@ -106,14 +118,14 @@ public class DataBase {
 			e.printStackTrace();
 		}
 		if (count == 0) {
-			return "";
+			return "nodata";
 		} else {
 			return win;
 		}
 	}
 
-	public String getPlayerLose(String userToken) {
-		String SQL = "SELECT lose FROM `PlayerInfo` WHERE UserToken=" + userToken + ";";
+	public String getPlayerLose(String apiToken) {
+		String SQL = "SELECT lose FROM `PlayerInfo` WHERE APIToken=" + apiToken + ";";
 		String lose = null;
 		Statement stmt = null;
 		try {
@@ -146,7 +158,7 @@ public class DataBase {
 			e.printStackTrace();
 		}
 		if (count == 0) {
-			return "";
+			return "nodata";
 		} else {
 			return lose;
 		}
@@ -175,9 +187,11 @@ public class DataBase {
 
 	public static void main(String[] args) {
 		final DataBase m = new DataBase();
-		m.getPlayerLose("123456789");
-		m.getPlayerLose("987654321");
-		m.getPlayerWin("123456789");
-		m.getPlayerWin("987654321");
+//		m.getPlayerLose("123456789");
+//		m.getPlayerLose("987654321");
+//		m.getPlayerWin("123456789");
+		System.out.println("debug " + m.getPlayerWin("9876545555321"));
+//		m.insertPlayerWinAndLose("11111", "11", "2");
+//		m.updatePlayerWinAndLose("11111", "0211", "0");
 	}
 }

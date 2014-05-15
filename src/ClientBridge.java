@@ -154,6 +154,11 @@ public class ClientBridge {
 			from.println(sendToClient);
 			to.println(sendToClient);
 			System.out.println("tell client A&B move : " + sendToClient);
+			if (chessBoard.kingDead()) {
+				System.out.println("tell from win ");
+			} else {
+				System.out.println("king is not dead ");
+			}
 		} else {
 			JSONObject sendToClient = new JSONObject();
 			sendToClient.put("action", "move");
@@ -182,6 +187,12 @@ public class ClientBridge {
 		String playerPhoto = clientMsg.get("player photo").toString();
 		String playerWin = playerDataBase.getPlayerWin(APIToken);
 		String playerLose = playerDataBase.getPlayerLose(APIToken);
+		if (playerWin.equals("nodata") || playerLose.equals("nodata")) {
+			playerWin = "0";
+			playerLose = "0";
+			playerDataBase.insertPlayerWinAndLose(APIToken, playerWin, playerLose);
+			System.out.println("first insert player info");
+		}
 		JSONObject sendToFrom = new JSONObject();
 		sendToFrom.put("action", "winAndLose");
 		sendToFrom.put("player win", playerWin);
