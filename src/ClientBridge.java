@@ -20,6 +20,7 @@ public class ClientBridge {
 	private Rule rule;
 	private Chessboard chessBoard;
 	private int whoseTurn = 0;
+	private boolean gameIsOver = false;
 	private DataBase playerDataBase;
 
 	public ClientBridge(SocketPack clientA, SocketPack clientB) {
@@ -77,8 +78,18 @@ public class ClientBridge {
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("client B is disconnect");
-			e.printStackTrace();
+			if (gameIsOver == true) {
+				tellClientRivalIsExit(clientBWriter);
+				System.out.println("client A is disconnect");
+			} else {
+				System.out.println("tell B is win because A is exit");
+				JSONObject sendToClient = new JSONObject();
+				sendToClient.put("action", "win");
+				clientBWriter.println(sendToClient);
+				tellClientRivalIsExit(clientBWriter);
+				System.out.println("client A is disconnect");
+			}
+//			e.printStackTrace();
 		}
 	}
 
@@ -107,9 +118,25 @@ public class ClientBridge {
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("client B is disconnect");
-			e.printStackTrace();
+			if (gameIsOver == true) {
+				tellClientRivalIsExit(clientAWriter);
+				System.out.println("client B is disconnect");
+			} else {
+				System.out.println("tell A is win because B is exit");
+				JSONObject sendToClient = new JSONObject();
+				sendToClient.put("action", "win");
+				clientAWriter.println(sendToClient);
+				tellClientRivalIsExit(clientAWriter);
+				System.out.println("client B is disconnect");
+			}
+//			e.printStackTrace();
 		}
+	}
+
+	private void tellClientRivalIsExit(PrintStream to) {
+		JSONObject sendToClient = new JSONObject();
+		sendToClient.put("action", "sayBye");
+		to.println(sendToClient);
 	}
 
 	private void getClientInfo(String aOrB) {
@@ -156,8 +183,13 @@ public class ClientBridge {
 			System.out.println("tell client A&B move : " + sendToClient);
 			if (chessBoard.kingDead()) {
 				System.out.println("tell from win ");
-			} else {
-				System.out.println("king is not dead ");
+				sendToClient = new JSONObject();
+				sendToClient.put("action", "win");
+				from.println(sendToClient);
+				sendToClient = new JSONObject();
+				sendToClient.put("action", "lose");
+				to.println(sendToClient);
+				gameIsOver = true;
 			}
 		} else {
 			JSONObject sendToClient = new JSONObject();
@@ -199,7 +231,6 @@ public class ClientBridge {
 		sendToFrom.put("player lose", playerLose);
 		from.println(sendToFrom);
 		System.out.println("from player win and lose" + playerWin + " " + playerLose);
-
 		System.out.println(playerName);
 		System.out.println(APIToken);
 		System.out.println(userToken);
