@@ -12,9 +12,9 @@ public class ClientBridge {
 	private BufferedReader clientAReader, clientBReader;
 	private PrintStream clientAWriter, clientBWriter;
 	private String APITokenA, APITokenB;
-	private String userTokenA, userTokenB;
-	private String playerAName, playerBName;
-	private String playerPhotoA, playerPhotoB;
+//	private String userTokenA, userTokenB;
+//	private String playerAName, playerBName;
+//	private String playerPhotoA, playerPhotoB;
 	private String playerAWin, playerBWin;
 	private String playerALose, playerBLose;
 	private Rule rule;
@@ -88,6 +88,11 @@ public class ClientBridge {
 				clientBWriter.println(sendToClient);
 				tellClientRivalIsExit(clientBWriter);
 				System.out.println("client A is disconnect");
+				playerBWin = String.valueOf((Integer.valueOf(playerBWin) + 1));
+				playerDataBase.updatePlayerWinAndLose(APITokenB, playerBWin, playerBLose);
+				playerALose = String.valueOf((Integer.valueOf(playerALose) + 1));
+				playerDataBase.updatePlayerWinAndLose(APITokenA, playerAWin, playerALose);
+				gameIsOver = true;
 			}
 //			e.printStackTrace();
 		}
@@ -128,6 +133,11 @@ public class ClientBridge {
 				clientAWriter.println(sendToClient);
 				tellClientRivalIsExit(clientAWriter);
 				System.out.println("client B is disconnect");
+				playerAWin = String.valueOf((Integer.valueOf(playerAWin) + 1));
+				playerDataBase.updatePlayerWinAndLose(APITokenA, playerAWin, playerALose);
+				playerBLose = String.valueOf((Integer.valueOf(playerBLose) + 1));
+				playerDataBase.updatePlayerWinAndLose(APITokenB, playerBWin, playerBLose);
+				gameIsOver = true;
 			}
 //			e.printStackTrace();
 		}
@@ -190,6 +200,17 @@ public class ClientBridge {
 				sendToClient.put("action", "lose");
 				to.println(sendToClient);
 				gameIsOver = true;
+				if (from.equals(clientAWriter)) {
+					playerAWin = String.valueOf((Integer.valueOf(playerAWin) + 1));
+					playerDataBase.updatePlayerWinAndLose(APITokenA, playerAWin, playerALose);
+					playerBLose = String.valueOf((Integer.valueOf(playerBLose) + 1));
+					playerDataBase.updatePlayerWinAndLose(APITokenB, playerBWin, playerBLose);
+				} else {
+					playerBWin = String.valueOf((Integer.valueOf(playerBWin) + 1));
+					playerDataBase.updatePlayerWinAndLose(APITokenB, playerBWin, playerBLose);
+					playerALose = String.valueOf((Integer.valueOf(playerALose) + 1));
+					playerDataBase.updatePlayerWinAndLose(APITokenA, playerAWin, playerALose);
+				}
 			}
 		} else {
 			JSONObject sendToClient = new JSONObject();
@@ -223,14 +244,25 @@ public class ClientBridge {
 			playerWin = "0";
 			playerLose = "0";
 			playerDataBase.insertPlayerWinAndLose(APIToken, playerWin, playerLose);
-			System.out.println("first insert player info");
+			System.out.println(from + " first insert player info");
+		}
+		if (from.equals(clientAWriter)) {
+			APITokenA = APIToken;
+			playerAWin = playerWin;
+			playerALose = playerLose;
+			System.out.println("player A\n" + APITokenA + "\n" + playerAWin + "\n" + playerALose + "\n");
+		} else {
+			APITokenB = APIToken;
+			playerBWin = playerWin;
+			playerBLose = playerLose;
+			System.out.println("player B\n" + APITokenB + "\n" + playerBWin + "\n" + playerBLose + "\n");
 		}
 		JSONObject sendToFrom = new JSONObject();
 		sendToFrom.put("action", "winAndLose");
 		sendToFrom.put("player win", playerWin);
 		sendToFrom.put("player lose", playerLose);
 		from.println(sendToFrom);
-		System.out.println("from player win and lose" + playerWin + " " + playerLose);
+		System.out.println("from player win and lose " + playerWin + " " + playerLose);
 		System.out.println(playerName);
 		System.out.println(APIToken);
 		System.out.println(userToken);

@@ -24,7 +24,7 @@ public class DataBase {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			// 註冊driver
-			con = DriverManager.getConnection("jdbc:mysql://192.168.1.239/chinese_game_server?useUnicode=true&characterEncoding=Big5", "michael", "123456");
+			con = DriverManager.getConnection("jdbc:mysql://192.168.1.239/chinese_game_server?useUnicode=true&characterEncoding=UTF-8", "michael", "123456");
 			// 取得connection
 
 			// jdbc:mysql://localhost/test?useUnicode=true&characterEncoding=Big5
@@ -38,7 +38,7 @@ public class DataBase {
 			System.out.println("Exception :" + x.toString());
 			System.out.println("資料庫無法連線!!!連線至DataBase2");
 			try {
-				con = DriverManager.getConnection("jdbc:mysql://123.204.84.144/chinese_game_server?useUnicode=true&characterEncoding=Big5", "michael", "123456");
+				con = DriverManager.getConnection("jdbc:mysql://123.204.84.144/chinese_game_server?useUnicode=true&characterEncoding=UTF-8", "michael", "123456");
 				System.out.println("資料庫連線成功");
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -85,7 +85,9 @@ public class DataBase {
 	}
 
 	public String getPlayerWin(String apiToken) {
-		String SQL = "SELECT win FROM `PlayerInfo` WHERE APIToken=" + apiToken + ";";
+		apiToken = "'" + apiToken + "'";
+		String SQL = "SELECT win FROM PlayerInfo WHERE APIToken=" + apiToken + ";";
+//		String SQL = "SELECT win FROM PlayerInfo WHERE APIToken='qw58qw4864hqwhq46849';";
 		String win = null;
 		Statement stmt = null;
 		try {
@@ -125,7 +127,8 @@ public class DataBase {
 	}
 
 	public String getPlayerLose(String apiToken) {
-		String SQL = "SELECT lose FROM `PlayerInfo` WHERE APIToken=" + apiToken + ";";
+		apiToken = "'" + apiToken + "'";
+		String SQL = "SELECT lose FROM PlayerInfo WHERE APIToken=" + apiToken + ";";
 		String lose = null;
 		Statement stmt = null;
 		try {
@@ -190,7 +193,11 @@ public class DataBase {
 //		m.getPlayerLose("123456789");
 //		m.getPlayerLose("987654321");
 //		m.getPlayerWin("123456789");
-		System.out.println("debug " + m.getPlayerWin("9876545555321"));
+//		m.insertPlayerWinAndLose("awgqwgqhg", "0", "0");
+		m.updatePlayerWinAndLose("awgqwgqhg", "10", "0");
+		System.out.println("debug " + m.getPlayerWin("awgqwgqhg"));
+		System.out.println("debug " + m.getPlayerLose("awgqwgqhg"));
+//		System.out.println("debug " + m.getPlayerWin("9876545555321"));
 //		m.insertPlayerWinAndLose("11111", "11", "2");
 //		m.updatePlayerWinAndLose("11111", "0211", "0");
 	}

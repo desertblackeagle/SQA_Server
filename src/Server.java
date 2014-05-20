@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import log.Logger;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,15 +18,18 @@ public class Server {
 	private ArrayList<SocketPack> al;
 	private ClientBridge bridge;
 	private SocketPack s1, s2;
+	private Logger logger;
 
 	public Server() {
 		// TODO Auto-generated constructor stub
 		al = new ArrayList<SocketPack>();
+		logger = new Logger("c:/SQA_Server/server/");
 		new Thread(new Runnable() {
 			public void run() {
 				try {
 					serverSocket = new ServerSocket(56);
 					System.out.println("server start");
+					logger.log("server start");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -65,11 +70,13 @@ public class Server {
 			server = serverSocket.accept();
 			BufferedReader clientReader = new BufferedReader(new InputStreamReader(server.getInputStream(), "utf-8"));
 			PrintStream clientWriter = new PrintStream(server.getOutputStream(), true, "utf-8");
-			System.out.println("Address : " + server.getInetAddress());
+			System.out.println("Address : " + server.getInetAddress() + " is connecting");
+			logger.log("Address : " + server.getInetAddress() + " is connecting");
 			if (check(clientReader)) {
 				SocketPack sp = new SocketPack(server, clientReader, clientWriter);
 				al.add(sp);
-				System.out.println("Add suss ");
+				System.out.println(server.getInetAddress() + " Add suss");
+				logger.log(server.getInetAddress() + " Add suss");
 			} else {
 				sendToClient.put("action", "check fail");
 				clientWriter.println(sendToClient.toString());
@@ -98,6 +105,7 @@ public class Server {
 							public void run() {
 								// TODO Auto-generated method stub
 								bridge = new ClientBridge(s1, s2);
+								logger.log("bridge " + s1.getSocket() + " and " + s2.getSocket());
 							}
 						}).start();
 					} else {
