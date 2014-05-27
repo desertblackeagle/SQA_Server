@@ -21,7 +21,7 @@ public class Logger {
 		if (!file.exists()) {
 			file.mkdirs();
 		}
-		sdFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss-SSS");
+		sdFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
 		date = new Date();
 		strDate = sdFormat.format(date);
 		System.out.println(strDate);
