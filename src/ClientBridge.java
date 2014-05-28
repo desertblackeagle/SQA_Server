@@ -235,7 +235,7 @@ public class ClientBridge {
 
 	private void clientGiveInfoAction(JSONObject clientMsg, PrintStream from, PrintStream to, int team) {
 		String APIToken = clientMsg.get("API Token").toString();
-		String userToken = clientMsg.get("User Token").toString();
+		String secreatToken = clientMsg.get("secreatToken").toString();
 		String playerName = clientMsg.get("player name").toString();
 		String playerPhoto = clientMsg.get("player photo").toString();
 		String playerWin = playerDataBase.getPlayerWin(APIToken);
@@ -265,7 +265,7 @@ public class ClientBridge {
 		System.out.println("from player win and lose " + playerWin + " " + playerLose);
 		System.out.println(playerName);
 		System.out.println(APIToken);
-		System.out.println(userToken);
+		System.out.println(secreatToken);
 		System.out.println(playerPhoto + "\n");
 		JSONObject sendTo = new JSONObject();
 		sendTo.put("action", "rival info");
