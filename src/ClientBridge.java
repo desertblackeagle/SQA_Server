@@ -67,8 +67,6 @@ public class ClientBridge {
 					clientMoveAction(clientMsg, clientAWriter, clientBWriter);
 				} else if (clientMsg.get("action").equals("chat")) {
 					clientChatAction(clientMsg, clientBWriter);
-				} else if (clientMsg.get("action").equals("sayBye")) {
-
 				} else if (clientMsg.get("action").equals("give info")) {
 					clientGiveInfoAction(clientMsg, clientAWriter, clientBWriter, 1);
 				}
@@ -112,8 +110,6 @@ public class ClientBridge {
 					clientMoveAction(clientMsg, clientBWriter, clientAWriter);
 				} else if (clientMsg.get("action").equals("chat")) {
 					clientChatAction(clientMsg, clientAWriter);
-				} else if (clientMsg.get("action").equals("sayBye")) {
-
 				} else if (clientMsg.get("action").equals("give info")) {
 					clientGiveInfoAction(clientMsg, clientBWriter, clientAWriter, 0);
 				}

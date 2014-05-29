@@ -10,7 +10,6 @@ import java.util.List;
 
 import log.Logger;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,6 +21,7 @@ public class Server {
 	private SocketPack s1, s2;
 	private Logger logger;
 	private CenterConnecter centerConnecter;
+	private BufferedReader buf;
 
 	public Server() {
 		// TODO Auto-generated constructor stub
@@ -44,17 +44,41 @@ public class Server {
 				}
 			}
 		}).start();
-		match();
+		new Thread(new Runnable() {
+			public void run() {
+				match();
+			}
+		}).start();
+		new Thread(new Runnable() {
+			public void run() {
+				initAdminControl();
+			}
+		}).start();
 	}
 
-	private boolean checkAPITokenAndSecretToken(String jsonString, String apiToken, String secreatToken) {
-		JSONArray jsonFromCenter = new JSONArray(jsonString);
-		for (int i = 0; i < jsonFromCenter.length(); i++) {
-			JSONObject player = new JSONObject(jsonFromCenter.get(i).toString().replaceAll(" ", ""));
-			System.out.println("check api : " + player.get("api_token") + "\nsecret : " + player.get("secret_token"));
-			if (apiToken.equals(player.get("api_token")) && secreatToken.equals(player.get("secret_token"))) {
-				return true;
+	private void initAdminControl() {
+		buf = new BufferedReader(new InputStreamReader(System.in));
+		String adminMessage;
+		try {
+			while ((adminMessage = buf.readLine()) != null) {
+				if (adminMessage.equals("shutdown")) {
+					// Shutdown the multi chat server.
+					System.exit(1);
+					break;
+				}
 			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private boolean checkAPITokenAndSecretToken(String jsonString) {
+		JSONObject player = new JSONObject(jsonString.toString().replaceAll(" ", ""));
+		System.out.println("center response : " + player);
+		logger.log("center response : " + player);
+		if (!player.has("detail")) {
+			return true;
 		}
 		return false;
 	}
@@ -63,16 +87,20 @@ public class Server {
 		JSONObject check;
 		try {
 			check = new JSONObject(clientReader.readLine());
-			System.out.println("check : " + check);
+			System.out.println("[ check ]");
+			logger.log("[ check ]");
 			if (check.get("action").equals("check")) {
 				String apiToken = check.get("API Token").toString();
 				String secreatToken = check.get("secreatToken").toString();
-				System.out.println(apiToken + " " + secreatToken);
+				System.out.println("client api token : " + apiToken + "\nclient secreat token : " + secreatToken);
+				logger.log("client api token : " + apiToken + "\nclient secreat token : " + secreatToken);
 				JSONObject toCenter = new JSONObject();
 				toCenter.put("api_token", "83d25eaeb2cebf405adc604f9262c660b6ce2d8d83687dfb01d4226ff027a049dd15d102fda255f9d5c810f83f63b81aaa66");
 				toCenter.put("secret_token", "48c8f0406516acc6d163af570722465578abdf14fa03dbd46850455aa1376f5f56809a8dabe2381718344f5ac6131050a283");
-				String stringFromCenter = centerConnecter.doPost("https://sqa.swim-fish.info/steam/dev/api/steam_user_list?format=json", toCenter.toString(), null, null, "UTF-8");
-				return checkAPITokenAndSecretToken(stringFromCenter, apiToken, secreatToken);
+				toCenter.put("user_api_token", apiToken);
+				toCenter.put("user_secret_token", secreatToken);
+				String stringFromCenter = centerConnecter.doPost("https://sqa.swim-fish.info/steam/dev/api/steam_user_check?format=json", toCenter.toString(), null, null, "UTF-8");
+				return checkAPITokenAndSecretToken(stringFromCenter);
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -84,39 +112,46 @@ public class Server {
 		return false;
 	}
 
+	private void connectClient(Socket subServer) {
+		JSONObject sendToClient = new JSONObject();
+		BufferedReader clientReader;
+		try {
+			clientReader = new BufferedReader(new InputStreamReader(subServer.getInputStream(), "utf-8"));
+			PrintStream clientWriter = new PrintStream(subServer.getOutputStream(), true, "utf-8");
+			System.out.println("Address : " + subServer.getInetAddress() + " is connecting");
+			logger.log("Address : " + subServer.getInetAddress() + " is connecting");
+			if (check(clientReader)) {
+				SocketPack sp = new SocketPack(subServer, clientReader, clientWriter);
+				al.add(sp);
+				System.out.println(subServer.getInetAddress() + " Add suss\n");
+				logger.log(subServer.getInetAddress() + " Add suss");
+			} else {
+				sendToClient.put("action", "check fail");
+				clientWriter.println(sendToClient.toString());
+				System.out.println(subServer.getInetAddress() + " fail to client \n");
+				logger.log(subServer.getInetAddress() + " fail to client");
+			}
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	private void waitForClient() {
 		try {
 			server = serverSocket.accept();
+			System.out.println(server + " accept");
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-					JSONObject sendToClient = new JSONObject();
-					BufferedReader clientReader;
-					try {
-						clientReader = new BufferedReader(new InputStreamReader(server.getInputStream(), "utf-8"));
-						PrintStream clientWriter = new PrintStream(server.getOutputStream(), true, "utf-8");
-						System.out.println("Address : " + server.getInetAddress() + " is connecting");
-						logger.log("Address : " + server.getInetAddress() + " is connecting");
-						if (check(clientReader)) {
-							SocketPack sp = new SocketPack(server, clientReader, clientWriter);
-							al.add(sp);
-							System.out.println(server.getInetAddress() + " Add suss");
-							logger.log(server.getInetAddress() + " Add suss");
-						} else {
-							sendToClient.put("action", "check fail");
-							clientWriter.println(sendToClient.toString());
-						}
-					} catch (UnsupportedEncodingException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					connectClient(server);
 				}
 			}).start();
-			;
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

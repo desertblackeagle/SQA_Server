@@ -187,18 +187,4 @@ public class DataBase {
 			System.out.println("Close Exception :" + e.toString());
 		}
 	}
-
-	public static void main(String[] args) {
-		final DataBase m = new DataBase();
-//		m.getPlayerLose("123456789");
-//		m.getPlayerLose("987654321");
-//		m.getPlayerWin("123456789");
-//		m.insertPlayerWinAndLose("awgqwgqhg", "0", "0");
-		m.updatePlayerWinAndLose("awgqwgqhg", "10", "0");
-		System.out.println("debug " + m.getPlayerWin("awgqwgqhg"));
-		System.out.println("debug " + m.getPlayerLose("awgqwgqhg"));
-//		System.out.println("debug " + m.getPlayerWin("9876545555321"));
-//		m.insertPlayerWinAndLose("11111", "11", "2");
-//		m.updatePlayerWinAndLose("11111", "0211", "0");
-	}
 }

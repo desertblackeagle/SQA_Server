@@ -35,21 +35,16 @@ public class Logger {
 	}
 
 	public void log(String msg) {
+		msg = msg.replaceAll("\n", "\r\n");
+		String now = sdFormat.format(new Date());
 		try {
-			fw.write("[" + strDate + "] " + msg + "\r\n");
+			fw.write("[" + now + "] " + msg + "\r\n");
 			fw.close();
 			fw = new FileWriter(path + strDate + ".txt", true);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Logger l = new Logger("c:/SQA_Server/server/");
-		l.log("123456789");
-
 	}
 
 }
