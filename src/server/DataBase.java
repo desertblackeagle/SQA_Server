@@ -1,3 +1,4 @@
+package server;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -87,7 +88,6 @@ public class DataBase {
 	public String getPlayerWin(String apiToken) {
 		apiToken = "'" + apiToken + "'";
 		String SQL = "SELECT win FROM PlayerInfo WHERE APIToken=" + apiToken + ";";
-//		String SQL = "SELECT win FROM PlayerInfo WHERE APIToken='qw58qw4864hqwhq46849';";
 		String win = null;
 		Statement stmt = null;
 		try {
