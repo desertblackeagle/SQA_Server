@@ -42,7 +42,7 @@
 		<echo message="${ant.project.name}: ${ant.file}" />
 		<javac debug="true" debuglevel="${debuglevel}" destdir="bin"
 			includeantruntime="false" source="${source}" target="${target}"
-			encoding="UTF-8" ">
+			encoding="UTF-8">
 			<src path="src" />
 			<classpath refid="SQA_Server.classpath" />
 		</javac>
