@@ -1,8 +1,11 @@
 <plugin>
-	<groupId> org.eluder.coveralls </groupId>
-	<artifactId> coveralls-maven-plugin </artifactId>
-	<version> 2.2.0 </version>
+	<groupId>org.codehaus.mojo</groupId>
+	<artifactId>cobertura-maven-plugin</artifactId>
+	<version>2.6</version>
 	<configuration>
-		<repoToken> pG1Z8lXw8yULzfiFGpeNZIYSM65aq7DsV </repoToken>
+		<format>xml</format>
+		<maxmem>256m</maxmem>
+		<!-- aggregated reports for multi-module projects -->
+		<aggregate>true</aggregate>
 	</configuration>
 </plugin>
