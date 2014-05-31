@@ -1,0 +1,8 @@
+<plugin>
+	<groupId> org.eluder.coveralls </groupId>
+	<artifactId> coveralls-maven-plugin </artifactId>
+	<version> 2.2.0 </version>
+	<configuration>
+		<repoToken> pG1Z8lXw8yULzfiFGpeNZIYSM65aq7DsV </repoToken>
+	</configuration>
+</plugin>
