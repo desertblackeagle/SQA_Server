@@ -1,0 +1,23 @@
+apply plugin: 'java'
+apply plugin: 'groovy'
+
+jar {  
+    from {  
+        configurations.runtime.collect {  
+            it.isDirectory() ? it : zipTree(it)  
+        }  
+    }  
+    manifest {  
+        attributes 'Main-Class': 'main.java.com.example.Main'  
+    }  
+    exclude('META-INF/*.txt')  
+}  
+
+repositories {
+	mavenCentral()
+}
+ 
+dependencies {
+	groovy 'org.codehaus.groovy:groovy-all:1.8.3'
+	testCompile 'org.spockframework:spock-core:0.5-groovy-1.8'
+}
