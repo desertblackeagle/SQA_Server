@@ -31,7 +31,7 @@ public class ClientBridge {
 		chessBoard = new Chessboard();
 		rule = new Rule();
 		playerDataBase = new DataBase();
-
+ 
 		clientAReader = clientA.getClientReader();
 		clientAWriter = clientA.getClientWriter();
 		clientBWriter = clientB.getClientWriter();

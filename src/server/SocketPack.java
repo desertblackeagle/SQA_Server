@@ -1,4 +1,5 @@
 package server;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,7 +12,7 @@ public class SocketPack {
 	private BufferedReader clientReader;
 	private PrintStream clientWriter;
 
-	public SocketPack(Socket socket, final BufferedReader clientReader, PrintStream clientWriter) {
+	public SocketPack(Socket socket, BufferedReader clientReader, PrintStream clientWriter) {
 		// TODO Auto-generated constructor stub
 		this.socket = socket;
 		this.clientReader = clientReader;
