@@ -15,6 +15,9 @@
 			location="${ECLIPSE_HOME}/plugins/org.junit_4.11.0.v201303080030/junit.jar" />
 		<pathelement
 			location="${ECLIPSE_HOME}/plugins/org.hamcrest.core_1.3.0.v201303031735.jar" />
+		<fileset dir="C:/Users/rose/Desktop">
+			<include name="*.jar" />
+		</fileset>
 	</path>
 	<path id="SQA_Server.classpath">
 		<pathelement location="bin" />
