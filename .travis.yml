@@ -7,4 +7,4 @@ jdk:
   - oraclejdk7
   
 service_name: travis-pro
-	repo_token: pG1Z8lXw8yULzfiFGpeNZIYSM65aq7DsV
+repo_token: pG1Z8lXw8yULzfiFGpeNZIYSM65aq7DsV
