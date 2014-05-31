@@ -1,4 +1,5 @@
 package server;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -93,7 +94,6 @@ public class ClientBridge {
 				playerDataBase.updatePlayerWinAndLose(APITokenA, playerAWin, playerALose);
 				gameIsOver = true;
 			}
-//			e.printStackTrace();
 		}
 	}
 
@@ -136,7 +136,6 @@ public class ClientBridge {
 				playerDataBase.updatePlayerWinAndLose(APITokenB, playerBWin, playerBLose);
 				gameIsOver = true;
 			}
-//			e.printStackTrace();
 		}
 	}
 
