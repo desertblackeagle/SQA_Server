@@ -1,1 +1,7 @@
 language: java
+before_script:
+  - unset GEM_PATH GEM_HOME IRBRC
+  - "export PATH=`pwd`/bin:$PATH"
+
+jdk:
+  - oraclejdk7
