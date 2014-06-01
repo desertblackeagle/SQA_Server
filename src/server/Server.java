@@ -1,4 +1,5 @@
 package server;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -168,23 +169,52 @@ public class Server {
 					if (al.size() >= 2) {
 						s1 = al.get(0);
 						s2 = al.get(1);
+
+						checkAlive(s2);
+						boolean checkAlive1, checkAlive2;
+						checkAlive1 = checkAlive(s1);
+						checkAlive2 = checkAlive(s2);
 						List<SocketPack> remove = new ArrayList<SocketPack>();
-						remove.add(s1);
-						remove.add(s2);
-						al.removeAll(remove);
-						new Thread(new Runnable() {
-							@Override
-							public void run() {
-								// TODO Auto-generated method stub
-								bridge = new ClientBridge(s1, s2);
-								logger.log("bridge " + s1.getSocket() + " and " + s2.getSocket());
+						if (checkAlive1 && checkAlive2) {
+							remove.add(s1);
+							remove.add(s2);
+							al.removeAll(remove);
+							new Thread(new Runnable() {
+								@Override
+								public void run() {
+									// TODO Auto-generated method stub
+									bridge = new ClientBridge(s1, s2);
+									logger.log("bridge " + s1.getSocket() + " and " + s2.getSocket());
+								}
+							}).start();
+						} else {
+							if (!checkAlive1) {
+								remove.add(s1);
 							}
-						}).start();
-					} else {
+							if (!checkAlive2) {
+								remove.add(s2);
+							}
+							al.removeAll(remove);
+						}
 					}
 				}
 			}
 		}).start();
+	}
+
+	private boolean checkAlive(SocketPack sp) {
+		JSONObject json = new JSONObject();
+		json.put("action", "is alive");
+		sp.getClientWriter().println(json);
+		try {
+			System.out.println(sp.getSocket() + " " + sp.getClientReader().readLine());
+			return true;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+//			e.printStackTrace();
+			System.out.println(sp.getSocket() + "is disconnect");
+			return false;
+		}
 	}
 
 	public static void main(String[] args) {
