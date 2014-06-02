@@ -1,4 +1,5 @@
 package server;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -16,16 +17,17 @@ public class DataBase {
 	private PreparedStatement pst = null;
 	// 執行,傳入之sql為預儲之字申,需要傳入變數之位置
 	// 先利用?來做標示
-
+	private String dataBaseIP = "192.168.1.239";
 	private String insertPlayerInfo = "INSERT INTO chinese_game_server.PlayerInfo (APIToken ,win ,lose)VALUES (?, ?, ?);";
-
 	private String updatePlayerInfo = "UPDATE  chinese_game_server.PlayerInfo SET win = ? , lose = ? WHERE APIToken = ?";
 
 	public DataBase() {
 		try {
+			ConfigGen config = new ConfigGen();
+			dataBaseIP = config.getConfig("dataBaseIP");
 			Class.forName("com.mysql.jdbc.Driver");
 			// 註冊driver
-			con = DriverManager.getConnection("jdbc:mysql://192.168.1.239/chinese_game_server?useUnicode=true&characterEncoding=UTF-8", "michael", "123456");
+			con = DriverManager.getConnection("jdbc:mysql://" + dataBaseIP + "/chinese_game_server?useUnicode=true&characterEncoding=UTF-8", "michael", "123456");
 			// 取得connection
 
 			// jdbc:mysql://localhost/test?useUnicode=true&characterEncoding=Big5
@@ -37,18 +39,7 @@ public class DataBase {
 		}// 有可能會產生sqlexception
 		catch (SQLException x) {
 			System.out.println("Exception :" + x.toString());
-			System.out.println("資料庫無法連線!!!連線至DataBase2");
-			try {
-				con = DriverManager.getConnection("jdbc:mysql://123.204.84.144/chinese_game_server?useUnicode=true&characterEncoding=UTF-8", "michael", "123456");
-				System.out.println("資料庫連線成功");
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-//				e.printStackTrace();
-				System.out.println("Exception :" + x.toString());
-				System.out.println("資料庫無法連線!!!");
-				System.out.println("請檢查帳號及密碼是否有誤，");
-				System.out.println("或者mysql服務是否關閉。");
-			}
+			System.out.println("資料庫無法連線!!!");
 		}
 
 	}

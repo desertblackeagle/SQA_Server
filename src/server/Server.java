@@ -28,7 +28,7 @@ public class Server {
 	public Server() {
 		// TODO Auto-generated constructor stub
 		al = new ArrayList<SocketPack>();
-		logger = new Logger();
+		logger = new Logger("Server");
 		centerConnecter = new CenterConnecter();
 		new Thread(new Runnable() {
 			public void run() {
@@ -64,7 +64,7 @@ public class Server {
 		try {
 			while ((adminMessage = buf.readLine()) != null) {
 				if (adminMessage.equals("shutdown")) {
-					// Shutdown the multi chat server.
+					logger.log("server shutdown by admin");
 					System.exit(1);
 					break;
 				}
@@ -145,7 +145,6 @@ public class Server {
 	private void waitForClient() {
 		try {
 			server = serverSocket.accept();
-			System.out.println(server + " accept");
 			new Thread(new Runnable() {
 				@Override
 				public void run() {

@@ -14,8 +14,9 @@ public class Logger {
 	private SimpleDateFormat sdFormat;
 	private Date date;
 
-	public Logger() {
+	public Logger(String dir) {
 		// TODO Auto-generated constructor stub
+
 		java.net.URL url = Logger.class.getProtectionDomain().getCodeSource().getLocation();
 
 		try {
@@ -27,7 +28,7 @@ public class Logger {
 		if (path.endsWith(".jar")) {
 			path = path.substring(0, path.lastIndexOf("/") + 1);
 		}
-		path = path + "/log/";
+		path = path + "/log/" + dir + "/";
 		file = new File(path);
 		if (!file.exists()) {
 			file.mkdirs();
