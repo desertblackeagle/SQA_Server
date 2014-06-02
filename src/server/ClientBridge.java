@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import log.Logger;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,14 +26,17 @@ public class ClientBridge {
 	private int whoseTurn = 0;
 	private boolean gameIsOver = false;
 	private DataBase playerDataBase;
+	private Logger logger;
 
 	public ClientBridge(SocketPack clientA, SocketPack clientB) {
 		// TODO Auto-generated constructor stub
+		logger = new Logger("ClientBridge");
 		System.out.println("Bridge");
+		logger.log("Bridge" + clientA.getSocket() + " and " + clientB.getSocket());
 		chessBoard = new Chessboard();
 		rule = new Rule();
 		playerDataBase = new DataBase();
- 
+
 		clientAReader = clientA.getClientReader();
 		clientAWriter = clientA.getClientWriter();
 		clientBWriter = clientB.getClientWriter();
@@ -57,6 +62,7 @@ public class ClientBridge {
 
 	private void talkToA() {
 		System.out.println("start talk to A");
+		logger.log("start talk to A");
 		getClientInfo("A");
 		JSONObject clientMsg;
 		String clientInput;
@@ -64,6 +70,7 @@ public class ClientBridge {
 			while ((clientInput = clientAReader.readLine()) != null) {
 				Thread.interrupted();
 				System.out.println("msg from client A : " + clientInput);
+				logger.log("msg from client A : " + clientInput);
 				clientMsg = new JSONObject(clientInput);
 				if (clientMsg.get("action").equals("move")) {
 					clientMoveAction(clientMsg, clientAWriter, clientBWriter);
@@ -81,13 +88,16 @@ public class ClientBridge {
 			if (gameIsOver == true) {
 				tellClientRivalIsExit(clientBWriter);
 				System.out.println("client A is disconnect");
+				logger.log("client A is disconnect");
 			} else {
 				System.out.println("tell B is win because A is exit");
+				logger.log("tell B is win because A is exit");
 				JSONObject sendToClient = new JSONObject();
 				sendToClient.put("action", "win");
 				clientBWriter.println(sendToClient);
 				tellClientRivalIsExit(clientBWriter);
 				System.out.println("client A is disconnect");
+				logger.log("client A is disconnect");
 				playerBWin = String.valueOf((Integer.valueOf(playerBWin) + 1));
 				playerDataBase.updatePlayerWinAndLose(APITokenB, playerBWin, playerBLose);
 				playerALose = String.valueOf((Integer.valueOf(playerALose) + 1));
@@ -99,6 +109,7 @@ public class ClientBridge {
 
 	private void talkToB() {
 		System.out.println("start talk to B");
+		logger.log("start talk to B");
 		getClientInfo("B");
 		JSONObject clientMsg;
 		String clientInput;
@@ -106,6 +117,7 @@ public class ClientBridge {
 			while ((clientInput = clientBReader.readLine()) != null) {
 				Thread.interrupted();
 				System.out.println("msg from client B : " + clientInput);
+				logger.log("msg from client B : " + clientInput);
 				clientMsg = new JSONObject(clientInput);
 				if (clientMsg.get("action").equals("move")) {
 					clientMoveAction(clientMsg, clientBWriter, clientAWriter);
@@ -123,13 +135,16 @@ public class ClientBridge {
 			if (gameIsOver == true) {
 				tellClientRivalIsExit(clientAWriter);
 				System.out.println("client B is disconnect");
+				logger.log("client B is disconnect");
 			} else {
 				System.out.println("tell A is win because B is exit");
+				logger.log("tell A is win because B is exit");
 				JSONObject sendToClient = new JSONObject();
 				sendToClient.put("action", "win");
 				clientAWriter.println(sendToClient);
 				tellClientRivalIsExit(clientAWriter);
 				System.out.println("client B is disconnect");
+				logger.log("client B is disconnect");
 				playerAWin = String.valueOf((Integer.valueOf(playerAWin) + 1));
 				playerDataBase.updatePlayerWinAndLose(APITokenA, playerAWin, playerALose);
 				playerBLose = String.valueOf((Integer.valueOf(playerBLose) + 1));
@@ -151,11 +166,13 @@ public class ClientBridge {
 			getInfoFromClient.put("action", "get info");
 			clientAWriter.println(getInfoFromClient);
 			System.out.println("tell A to give info " + getInfoFromClient);
+			logger.log("tell A to give info " + getInfoFromClient);
 		} else {
 			JSONObject getInfoFromClient = new JSONObject();
 			getInfoFromClient.put("action", "get info");
 			clientBWriter.println(getInfoFromClient);
 			System.out.println("tell B to give info " + getInfoFromClient);
+			logger.log("tell B to give info " + getInfoFromClient);
 		}
 	}
 
@@ -167,6 +184,7 @@ public class ClientBridge {
 		System.out.println("chess to x : " + clientMsg.get("chess toX"));
 		System.out.println("chess to y : " + clientMsg.get("chess toY"));
 		System.out.println("chess color : " + clientMsg.get("chess color"));
+		logger.log("move detail from client : color " + clientMsg.get("chess color") + " " + clientMsg.get("chess name") + " move from " + clientMsg.get("chess X") + " , " + clientMsg.get("chess Y") + " to " + clientMsg.get("chess toX") + " , " + clientMsg.get("chess toY"));
 		String chessName = (String) clientMsg.get("chess name");
 		int x = (Integer) clientMsg.get("chess X");
 		int y = (Integer) clientMsg.get("chess Y");
@@ -178,6 +196,7 @@ public class ClientBridge {
 			chessBoard.printChessBoard();
 			whoseTurn = whoseTurn ^ 1;
 			System.out.println("whoseTurn : " + whoseTurn);
+			logger.log("turm " + whoseTurn + " to play");
 			JSONObject sendToClient = new JSONObject();
 			sendToClient.put("action", "move");
 			sendToClient.put("chess X", clientMsg.get("chess X"));
@@ -187,6 +206,7 @@ public class ClientBridge {
 			from.println(sendToClient);
 			to.println(sendToClient);
 			System.out.println("tell client A&B move : " + sendToClient);
+			logger.log("tell client A&B move : " + sendToClient);
 			if (chessBoard.kingDead()) {
 				System.out.println("tell from win ");
 				sendToClient = new JSONObject();
@@ -227,6 +247,7 @@ public class ClientBridge {
 		sendToClient.put("chat msg", chat);
 		to.println(sendToClient);
 		System.out.println("tell client chat msg : " + sendToClient);
+		logger.log("tell client chat msg : " + sendToClient);
 	}
 
 	private void clientGiveInfoAction(JSONObject clientMsg, PrintStream from, PrintStream to, int team) {
