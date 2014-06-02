@@ -14,9 +14,20 @@ public class Logger {
 	private SimpleDateFormat sdFormat;
 	private Date date;
 
-	public Logger(String path) {
+	public Logger() {
 		// TODO Auto-generated constructor stub
-		this.path = path;
+		java.net.URL url = Logger.class.getProtectionDomain().getCodeSource().getLocation();
+
+		try {
+			path = java.net.URLDecoder.decode(url.getPath(), "utf-8");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if (path.endsWith(".jar")) {
+			path = path.substring(0, path.lastIndexOf("/") + 1);
+		}
+		path = path + "/log/";
 		file = new File(path);
 		if (!file.exists()) {
 			file.mkdirs();

@@ -28,7 +28,7 @@ public class Server {
 	public Server() {
 		// TODO Auto-generated constructor stub
 		al = new ArrayList<SocketPack>();
-		logger = new Logger("c:/SQA_Server/server/");
+		logger = new Logger();
 		centerConnecter = new CenterConnecter();
 		new Thread(new Runnable() {
 			public void run() {
