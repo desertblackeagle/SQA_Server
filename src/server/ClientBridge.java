@@ -17,7 +17,7 @@ public class ClientBridge {
 	private PrintStream clientAWriter, clientBWriter;
 	private String APITokenA, APITokenB;
 //	private String userTokenA, userTokenB;
-//	private String playerAName, playerBName;
+	private String playerAName, playerBName;
 //	private String playerPhotoA, playerPhotoB;
 	private String playerAWin, playerBWin;
 	private String playerALose, playerBLose;
@@ -27,6 +27,7 @@ public class ClientBridge {
 	private boolean gameIsOver = false;
 	private DataBase playerDataBase;
 	private Logger logger;
+	private CenterConnecter center;
 
 	public ClientBridge(SocketPack clientA, SocketPack clientB) {
 		// TODO Auto-generated constructor stub
@@ -36,7 +37,7 @@ public class ClientBridge {
 		chessBoard = new Chessboard();
 		rule = new Rule();
 		playerDataBase = new DataBase();
-
+		center = new CenterConnecter();
 		clientAReader = clientA.getClientReader();
 		clientAWriter = clientA.getClientWriter();
 		clientBWriter = clientB.getClientWriter();
@@ -205,6 +206,21 @@ public class ClientBridge {
 			sendToClient.put("chess toY", clientMsg.get("chess toY"));
 			from.println(sendToClient);
 			to.println(sendToClient);
+			JSONObject toCenter = new JSONObject();
+			toCenter.put("api_token", "cd791e1d192a6f9090a0c89f5605bbea005a33c9e684aafa87668510ac188c5f0d803fc13c9b4497fb78f94a7dca526eb508");
+			if (from.equals(clientAWriter)) {
+				toCenter.put("name", playerAName);
+			} else {
+				toCenter.put("name", playerBName);
+			}
+			toCenter.put("chess", transferChessName(chessName));
+			toCenter.put("action", "Move");
+			toCenter.put("eaten", "None");
+			toCenter.put("fromx", x);
+			toCenter.put("fromy", y);
+			toCenter.put("tox", toX);
+			toCenter.put("toy", toY);
+			center.doPost("https://sqa.swim-fish.info/steam/game_info/update/?format=json", toCenter.toString(), null, null, "UTF-8");
 			System.out.println("tell client A&B move : " + sendToClient);
 			logger.log("tell client A&B move : " + sendToClient);
 			if (chessBoard.kingDead()) {
@@ -254,6 +270,13 @@ public class ClientBridge {
 		String APIToken = clientMsg.get("API Token").toString();
 		String secreatToken = clientMsg.get("secreatToken").toString();
 		String playerName = clientMsg.get("player name").toString();
+		if (from.equals(clientAWriter)) {
+			playerAName = playerName;
+			System.out.println("I am " + from + " : " + playerName);
+		} else {
+			playerBName = playerName;
+			System.out.println("I am " + from + " : " + playerName);
+		}
 		String playerPhoto = clientMsg.get("player photo").toString();
 		String playerWin = playerDataBase.getPlayerWin(APIToken);
 		String playerLose = playerDataBase.getPlayerLose(APIToken);
@@ -293,5 +316,59 @@ public class ClientBridge {
 		sendTo.put("team", team);
 		to.println(sendTo);
 		System.out.println("tell client rival info : " + sendTo);
+	}
+
+	private static String transferChessName(String chessName) {
+		if (chessName.equals("redKing") || chessName.equals("blackKing")) {
+
+		} else {
+			chessName = chessName.substring(0, chessName.length() - 1);
+		}
+		switch (chessName) {
+		case "redPawn":
+			chessName = "兵";
+			break;
+		case "blackPawn":
+			chessName = "卒";
+			break;
+		case "redHorse":
+			chessName = "傌";
+			break;
+		case "blackHorse":
+			chessName = "馬";
+			break;
+		case "redKing":
+			chessName = "帥";
+			break;
+		case "blackKing":
+			chessName = "將";
+			break;
+		case "redRook":
+			chessName = "俥";
+			break;
+		case "blackRook":
+			chessName = "車";
+			break;
+		case "redCannon":
+			chessName = "炮";
+			break;
+		case "blackCannon":
+			chessName = "包";
+			break;
+		case "redElephant":
+			chessName = "相";
+			break;
+		case "blackElephant":
+			chessName = "象";
+			break;
+		case "redWarrior":
+			chessName = "仕";
+			break;
+		case "blackWarrior":
+			chessName = "士";
+			break;
+		}
+		System.out.println("transfor name " + chessName);
+		return chessName;
 	}
 }
