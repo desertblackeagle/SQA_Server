@@ -16,9 +16,7 @@ public class ClientBridge {
 	private BufferedReader clientAReader, clientBReader;
 	private PrintStream clientAWriter, clientBWriter;
 	private String APITokenA, APITokenB;
-//	private String userTokenA, userTokenB;
 	private String playerAName, playerBName;
-//	private String playerPhotoA, playerPhotoB;
 	private String playerAWin, playerBWin;
 	private String playerALose, playerBLose;
 	private Rule rule;
@@ -104,6 +102,17 @@ public class ClientBridge {
 				playerALose = String.valueOf((Integer.valueOf(playerALose) + 1));
 				playerDataBase.updatePlayerWinAndLose(APITokenA, playerAWin, playerALose);
 				gameIsOver = true;
+				JSONObject toCenter = new JSONObject();
+				toCenter.put("api_token", "cd791e1d192a6f9090a0c89f5605bbea005a33c9e684aafa87668510ac188c5f0d803fc13c9b4497fb78f94a7dca526eb508");
+				toCenter.put("name", playerBName);
+				toCenter.put("chess", "None");
+				toCenter.put("action", "Win");
+				toCenter.put("eaten", "None");
+				toCenter.put("fromx", "None");
+				toCenter.put("fromy", "None");
+				toCenter.put("tox", "None");
+				toCenter.put("toy", "None");
+				center.doPost("https://sqa.swim-fish.info/steam/game_info/update/?format=json", toCenter.toString(), null, null, "UTF-8");
 			}
 		}
 	}
@@ -151,6 +160,17 @@ public class ClientBridge {
 				playerBLose = String.valueOf((Integer.valueOf(playerBLose) + 1));
 				playerDataBase.updatePlayerWinAndLose(APITokenB, playerBWin, playerBLose);
 				gameIsOver = true;
+				JSONObject toCenter = new JSONObject();
+				toCenter.put("api_token", "cd791e1d192a6f9090a0c89f5605bbea005a33c9e684aafa87668510ac188c5f0d803fc13c9b4497fb78f94a7dca526eb508");
+				toCenter.put("name", playerAName);
+				toCenter.put("chess", "None");
+				toCenter.put("action", "Win");
+				toCenter.put("eaten", "None");
+				toCenter.put("fromx", "None");
+				toCenter.put("fromy", "None");
+				toCenter.put("tox", "None");
+				toCenter.put("toy", "None");
+				center.doPost("https://sqa.swim-fish.info/steam/game_info/update/?format=json", toCenter.toString(), null, null, "UTF-8");
 			}
 		}
 	}
@@ -237,11 +257,33 @@ public class ClientBridge {
 					playerDataBase.updatePlayerWinAndLose(APITokenA, playerAWin, playerALose);
 					playerBLose = String.valueOf((Integer.valueOf(playerBLose) + 1));
 					playerDataBase.updatePlayerWinAndLose(APITokenB, playerBWin, playerBLose);
+					toCenter = new JSONObject();
+					toCenter.put("api_token", "cd791e1d192a6f9090a0c89f5605bbea005a33c9e684aafa87668510ac188c5f0d803fc13c9b4497fb78f94a7dca526eb508");
+					toCenter.put("name", playerAName);
+					toCenter.put("chess", "None");
+					toCenter.put("action", "Win");
+					toCenter.put("eaten", "None");
+					toCenter.put("fromx", "None");
+					toCenter.put("fromy", "None");
+					toCenter.put("tox", "None");
+					toCenter.put("toy", "None");
+					center.doPost("https://sqa.swim-fish.info/steam/game_info/update/?format=json", toCenter.toString(), null, null, "UTF-8");
 				} else {
 					playerBWin = String.valueOf((Integer.valueOf(playerBWin) + 1));
 					playerDataBase.updatePlayerWinAndLose(APITokenB, playerBWin, playerBLose);
 					playerALose = String.valueOf((Integer.valueOf(playerALose) + 1));
 					playerDataBase.updatePlayerWinAndLose(APITokenA, playerAWin, playerALose);
+					toCenter = new JSONObject();
+					toCenter.put("api_token", "cd791e1d192a6f9090a0c89f5605bbea005a33c9e684aafa87668510ac188c5f0d803fc13c9b4497fb78f94a7dca526eb508");
+					toCenter.put("name", playerBName);
+					toCenter.put("chess", "None");
+					toCenter.put("action", "Win");
+					toCenter.put("eaten", "None");
+					toCenter.put("fromx", "None");
+					toCenter.put("fromy", "None");
+					toCenter.put("tox", "None");
+					toCenter.put("toy", "None");
+					center.doPost("https://sqa.swim-fish.info/steam/game_info/update/?format=json", toCenter.toString(), null, null, "UTF-8");
 				}
 			}
 		} else {
