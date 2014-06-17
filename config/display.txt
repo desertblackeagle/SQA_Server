@@ -1,1 +1,0 @@
-{"display size y":"600","display size x":"800"}
